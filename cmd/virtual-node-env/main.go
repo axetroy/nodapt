@@ -24,15 +24,15 @@ virtual-node-env [OPTIONS] <COMMAND>
 virtual-node-env use <VERSION>
 
 OPTIONS:
-  --help                 Print help information
-  --version              Print version information
-  --clean                Clean the virtual node environment
-  --node <version>       Specify the version of node to use
-  --node <version>       Specify the version of node to use
+  --help                  Print help information
+  --version               Print version information
+  --clean                 Clean the virtual node environment
+  --node <version>        Specify the version of node to use
+  --node <version>        Specify the version of node to use
 
 ENVIRONMENT VARIABLES:
-	NODE_MIRROR            The mirror address of the nodejs download, default is https://nodejs.org/dist/
-                         Chinese users use this mirror by default: https://registry.npmmirror.com/-/binary/node/
+	NODE_MIRROR             The mirror address of the nodejs download, default is https://nodejs.org/dist/
+                          Chinese users use this mirror by default: https://registry.npmmirror.com/-/binary/node/
 
 SOURCE CODE:
   https://github.com/axetroy/virtual-node-env`)
