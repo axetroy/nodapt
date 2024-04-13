@@ -61,6 +61,12 @@ for (const pkgName of packages) {
       executableFileName
     );
 
+    fs.statSync(executableFilePath);
+
+    fs.readdirSync(path.join(__dirname, "..", "dist", distFolder));
+
+    fs.statSync(path.join(__dirname, pkgName, executableFileName));
+
     fs.copyFileSync(
       executableFilePath,
       path.join(__dirname, pkgName, executableFileName)
