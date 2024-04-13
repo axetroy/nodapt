@@ -99,7 +99,7 @@ func downloadFile(url string, fileName string) error {
 	defer resp.Body.Close()
 
 	if resp.StatusCode >= http.StatusBadRequest {
-		return errors.New(fmt.Sprintf("download file with status code %d", resp.StatusCode))
+		return errors.New(fmt.Sprintf("download file '%s' with status code %d", url, resp.StatusCode))
 	}
 
 	if err := ensureDirExists(filepath.Dir(fileName)); err != nil {

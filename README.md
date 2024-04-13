@@ -12,6 +12,7 @@ A tool similar to virtualenv, used to set a specific node version for a specifie
 
 - [x] Cross-platform supports. including windows
 - [x] Automatically download node
+- [x] Support `use` command to switch node version temporarily
 
 ### Usage
 
@@ -19,14 +20,12 @@ A tool similar to virtualenv, used to set a specific node version for a specifie
 $ virtual-node-env --node=16.20.0 node -v
 v16.20.0
 
-$ virtual-node-env --node=16.20.0 npm -v
-8.19.4
-
 $ virtual-node-env --node=18.20.0 node -v
 v18.20.0
 
-$ virtual-node-env --node=18.20.0 npm -v
-10.5.0
+$ virtual-node-env use v20.0.0
+$ node -v
+v20.0.0
 ```
 
 or put it into `package.json`

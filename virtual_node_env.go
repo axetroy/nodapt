@@ -1,6 +1,7 @@
 package virtualnodeenv
 
 import (
+	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -90,6 +91,59 @@ func Setup(options *Options) error {
 	if err := process.Run(); err != nil {
 
 		exitCode := process.ProcessState.ExitCode()
+
+		if exitCode != 0 {
+			os.Exit(exitCode)
+		}
+
+		return errors.WithStack(err)
+	}
+
+	return nil
+}
+
+func Use(version string) error {
+
+	shell, err := getShell()
+
+	if err != nil {
+		return errors.WithStack(err)
+	}
+
+	nodeEnvPath, err := DownloadNodeJs(version)
+
+	if err != nil {
+		return errors.WithStack(err)
+	}
+
+	// 创建一个 *exec.Cmd 对象来运行 Fish shell
+	cmd := exec.Command(shell)
+
+	var binaryFileDir string
+
+	if runtime.GOOS == "windows" {
+		binaryFileDir = nodeEnvPath
+	} else {
+		binaryFileDir = filepath.Join(nodeEnvPath, "bin")
+	}
+
+	cmd.Env = generateNewEnvs([]string{binaryFileDir})
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	cmd.Stdin = os.Stdin
+
+	// 启动命令
+	if err := cmd.Start(); err != nil {
+		return errors.WithStack(err)
+	}
+
+	// 往 shell 中写入内容
+	if _, err = fmt.Fprintf(os.Stdin, "Now you are using node v%s\n", version); err != nil {
+		return errors.WithStack(err)
+	}
+
+	if err := cmd.Wait(); err != nil {
+		exitCode := cmd.ProcessState.ExitCode()
 
 		if exitCode != 0 {
 			os.Exit(exitCode)

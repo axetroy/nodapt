@@ -2,6 +2,7 @@ virtual-node-env - Virtual node environment, similar to nvm
 
 USAGE:
 virtual-node-env [OPTIONS] <COMMAND>
+virtual-node-env use <VERSION>
 
 OPTIONS:
   --help                 Print help information

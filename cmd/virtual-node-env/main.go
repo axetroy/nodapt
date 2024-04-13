@@ -21,6 +21,7 @@ func printHelp() {
 
 USAGE:
 virtual-node-env [OPTIONS] <COMMAND>
+virtual-node-env use <VERSION>
 
 OPTIONS:
   --help                 Print help information
@@ -126,22 +127,35 @@ func run() error {
 		os.Exit(0)
 	}
 
-	nodeVersion := f.Node
-
-	if strings.TrimSpace(nodeVersion) == "" {
-		return fmt.Errorf("node version is required")
-	}
-
-	nodeVersion = strings.TrimPrefix(nodeVersion, "v")
-
 	if len(f.Cmd) == 0 {
 		panic("missing command")
 	}
 
-	return VirtualNodeEnvironment.Setup(&VirtualNodeEnvironment.Options{
-		Version: nodeVersion,
-		Cmd:     f.Cmd,
-	})
+	cmd := f.Cmd[0]
+
+	switch cmd {
+	case "use":
+		if len(f.Cmd) == 1 {
+			return fmt.Errorf("missing node version")
+		}
+
+		nodeVersion := strings.TrimPrefix(f.Cmd[1], "v")
+
+		return VirtualNodeEnvironment.Use(nodeVersion)
+	default:
+		nodeVersion := f.Node
+
+		if strings.TrimSpace(nodeVersion) == "" {
+			return fmt.Errorf("node version is required")
+		}
+
+		nodeVersion = strings.TrimPrefix(nodeVersion, "v")
+
+		return VirtualNodeEnvironment.Setup(&VirtualNodeEnvironment.Options{
+			Version: nodeVersion,
+			Cmd:     f.Cmd,
+		})
+	}
 }
 
 func main() {
