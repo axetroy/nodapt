@@ -1,0 +1,9 @@
+#!/usr/bin/env node
+
+const { exec } = require("../lib/index");
+
+const ps = exec(process.argv.slice(2), { stdio: "inherit" });
+
+ps.on("exit", (code) => {
+  process.exit(code);
+});

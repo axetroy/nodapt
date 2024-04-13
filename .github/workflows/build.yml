@@ -1,0 +1,91 @@
+name: ci
+
+on: [push, pull_request]
+
+jobs:
+  ci:
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    strategy:
+      matrix:
+        go: ["^1.19"]
+        os: [ubuntu-latest, macOS-latest, windows-latest]
+    name: Go ${{ matrix.go }} in ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-go@v2
+        with:
+          go-version: ${{ matrix.go }}
+
+      - name: Environment
+        run: |
+          go version
+          go env
+
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v3
+        with:
+          version: v1.56.2
+          args: -v --timeout 5m0s
+
+      - name: Format
+        run: make format
+
+      - name: Test
+        run: |
+          make test
+          go mod tidy
+          git checkout ./
+
+      # - name: Build
+      #   uses: goreleaser/goreleaser-action@v2
+      #   with:
+      #     version: latest
+      #     args: release --rm-dist --skip-publish --skip-validate
+
+  release:
+    name: Release to Github
+    if: startsWith(github.ref, 'refs/tags/') && github.repository == 'axetroy/virtual-node-env'
+    needs: [ci]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-go@v2
+        with:
+          go-version: "^1.19"
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          registry-url: "https://registry.npmjs.org"
+
+      - uses: axetroy/setup-whatchanged@v1
+        with:
+          version: v0.5.6
+
+      - name: Generate release.md
+        run: |
+          whatchanged --output=release.md
+          cat release.md
+
+      - name: Release to Github
+        uses: goreleaser/goreleaser-action@v2
+        with:
+          version: latest
+          args: release --clean --release-notes=./release.md
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+
+      - name: Prepare npm package
+        run: node npm/prepare.js
+        env:
+          GIT_REF: ${{ github.ref }}
+
+      - name: Publish npm package
+        run: node npm/publish.js
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

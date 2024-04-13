@@ -1,0 +1,15 @@
+{
+  "name": "@axetroy/virtual-node-env-windows-arm64",
+  "version": "0.1.0",
+  "description": "The Windows arm64 binary for virtual-node-env",
+  "repository": "https://github.com/axetroy/virtual-node-env",
+  "license": "Anti-996 License",
+  "private": false,
+  "preferUnplugged": true,
+  "engines": {
+    "node": ">=12"
+  },
+  "files": ["virtual-node-env.exe"],
+  "os": ["win32"],
+  "cpu": ["arm64"]
+}

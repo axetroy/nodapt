@@ -1,0 +1,32 @@
+package virtualnodeenv
+
+import (
+	"fmt"
+	"runtime"
+)
+
+func getNodeFileName(version string) string {
+	if runtime.GOARCH == "x86" {
+		return fmt.Sprintf("node-v%s-linux-x86", version)
+	} else if runtime.GOARCH == "x64" {
+		return fmt.Sprintf("node-v%s-linux-x64", version)
+	} else if runtime.GOARCH == "arm64" {
+		return fmt.Sprintf("node-v%s-linux-arm64 ", version)
+	} else {
+		return ""
+	}
+}
+
+func getNodeDownloadName(version string) string {
+	fileName := getNodeFileName(version)
+
+	if runtime.GOARCH == "x86" {
+		return fmt.Sprintf("%s.tar.gz", fileName)
+	} else if runtime.GOARCH == "x64" {
+		return fmt.Sprintf("%s.tar.gz", fileName)
+	} else if runtime.GOARCH == "arm64" {
+		return fmt.Sprintf("%s.tar.gz ", fileName)
+	} else {
+		return ""
+	}
+}

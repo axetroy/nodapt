@@ -1,0 +1,20 @@
+builds:
+  - binary: virtual-node-env
+    main: ./cmd/virtual-node-env/main.go
+    goos:
+      - windows
+      - darwin
+      - linux
+    goarch:
+      - amd64
+      - arm64
+    env:
+      - CGO_ENABLED=0
+    flags:
+      - -mod=vendor
+      - -trimpath
+
+archives:
+  - files:
+      - none*
+    name_template: "{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}{{ if .Mips }}_{{ .Mips }}{{ end }}"
