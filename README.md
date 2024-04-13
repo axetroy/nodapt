@@ -29,6 +29,14 @@ $ virtual-node-env --node=18.20.0 npm -v
 10.5.0
 ```
 
+or put it into `package.json`
+
+```json
+ "scripts": {
+    "build": "virtual-node-env --node=16.20.0 yarn build"
+  },
+```
+
 ### Install
 
 1. [Cask](https://github.com/cask-pkg/cask.rs) (Mac/Linux/Windows)
