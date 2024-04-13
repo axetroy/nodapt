@@ -6,6 +6,7 @@ virtual-node-env [OPTIONS] <COMMAND>
 OPTIONS:
   --help                 Print help information
   --version              Print version information
+  --clean                Clean the virtual node environment
   --node <version>       Specify the version of node to use
 
 SOURCE CODE:
