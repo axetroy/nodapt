@@ -37,12 +37,12 @@ for (const pkgName of packages) {
 
   if (pkgName.startsWith("virtual-node-env-")) {
     const fileMap = {
-      "virtual-node-env-darwin-arm64": "virtual_node_env_darwin_arm64",
-      "virtual-node-env-darwin-amd64": "virtual_node_env_darwin_amd64_v1",
-      "virtual-node-env-linux-amd64": "virtual_node_env_linux_amd64_v1",
-      "virtual-node-env-linux-arm64": "virtual_node_env_linux_arm64",
-      "virtual-node-env-windows-amd64": "virtual_node_env_windows_amd64_v1",
-      "virtual-node-env-windows-arm64": "virtual_node_env_windows_arm64",
+      "virtual-node-env-darwin-arm64": "virtual-node-env_darwin_arm64",
+      "virtual-node-env-darwin-amd64": "virtual-node-env_darwin_amd64_v1",
+      "virtual-node-env-linux-amd64": "virtual-node-env_linux_amd64_v1",
+      "virtual-node-env-linux-arm64": "virtual-node-env_linux_arm64",
+      "virtual-node-env-windows-amd64": "virtual-node-env_windows_amd64_v1",
+      "virtual-node-env-windows-arm64": "virtual-node-env_windows_arm64",
     };
 
     if (pkgName in fileMap === false)
@@ -60,13 +60,6 @@ for (const pkgName of packages) {
       distFolder,
       executableFileName
     );
-
-    console.log(fs.readdirSync(path.join(__dirname, "..", "dist")));
-    console.log(fs.readdirSync(path.join(__dirname, "..", "dist", distFolder)));
-
-    fs.statSync(executableFilePath);
-
-    fs.statSync(path.join(__dirname, pkgName, executableFileName));
 
     fs.copyFileSync(
       executableFilePath,
