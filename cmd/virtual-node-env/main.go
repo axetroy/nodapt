@@ -27,6 +27,11 @@ OPTIONS:
   --version              Print version information
   --clean                Clean the virtual node environment
   --node <version>       Specify the version of node to use
+  --node <version>       Specify the version of node to use
+
+ENVIRONMENT VARIABLES:
+	NODE_MIRROR            The mirror address of the nodejs download, default is https://nodejs.org/dist/
+                         Chinese users use this mirror by default: https://registry.npmmirror.com/-/binary/node/
 
 SOURCE CODE:
   https://github.com/axetroy/virtual-node-env`)
@@ -107,7 +112,14 @@ func run() error {
 	}
 
 	if f.Clean {
-		dir := filepath.Join(os.Getenv("HOME"), "virtual-node-env")
+
+		homeDir, err := os.UserHomeDir()
+
+		if err != nil {
+			return errors.WithStack(err)
+		}
+
+		dir := filepath.Join(homeDir, ".virtual-node-env")
 		if err := os.RemoveAll(dir); err != nil {
 			return errors.WithStack(err)
 		}

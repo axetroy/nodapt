@@ -15,8 +15,24 @@ import (
 	"github.com/pkg/errors"
 )
 
+func getEnv(fallback string, keys ...string) string {
+	for _, key := range keys {
+		if value := os.Getenv(key); value != "" {
+			return value
+		}
+	}
+
+	return fallback
+}
+
 func DownloadNodeJs(version string) (string, error) {
-	virtualNodeEnvPath := filepath.Join(os.Getenv("HOME"), "virtual-node-env")
+	homeDir, err := os.UserHomeDir()
+
+	if err != nil {
+		return "", errors.WithStack(err)
+	}
+
+	virtualNodeEnvPath := filepath.Join(homeDir, ".virtual-node-env")
 
 	fileNameWithoutExt := getNodeFileName(version)
 	fileNameWithExt := getNodeDownloadName(version)
@@ -28,8 +44,15 @@ func DownloadNodeJs(version string) (string, error) {
 		return destFolder, nil
 	}
 
-	// url := fmt.Sprintf("https://nodejs.org/dist/v%s/%s", version, targetName)
-	url := fmt.Sprintf("https://registry.npmmirror.com/-/binary/node/v%s/%s", version, fileNameWithExt)
+	defaultMirrorURL := "https://nodejs.org/dist/"
+
+	if strings.Contains(os.Getenv("LANG"), "zh_CN") {
+		defaultMirrorURL = "https://registry.npmmirror.com/-/binary/node/"
+	}
+
+	nodeMirrorURL := getEnv(defaultMirrorURL, "NODE_MIRROR", "node_mirror")
+
+	url := fmt.Sprintf("%sv%s/%s", nodeMirrorURL, version, fileNameWithExt)
 
 	destFile := filepath.Join(virtualNodeEnvPath, "versions", fileNameWithExt)
 
