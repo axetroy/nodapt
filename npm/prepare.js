@@ -61,9 +61,10 @@ for (const pkgName of packages) {
       executableFileName
     );
 
-    fs.statSync(executableFilePath);
+    console.log(fs.readdirSync(path.join(__dirname, "..", "dist")));
+    console.log(fs.readdirSync(path.join(__dirname, "..", "dist", distFolder)));
 
-    fs.readdirSync(path.join(__dirname, "..", "dist", distFolder));
+    fs.statSync(executableFilePath);
 
     fs.statSync(path.join(__dirname, pkgName, executableFileName));
 
