@@ -65,7 +65,7 @@ func TestMain(t *testing.T) {
 		assert.Nil(t, err)
 
 		t.Logf("Running cli test '%s' ...", fName)
-		assert.Equal(t, string(expectOut), string(output))
+		assert.Equal(t, strings.ReplaceAll(string(expectOut), "\r\n", "\n"), string(output))
 	}
 
 }
