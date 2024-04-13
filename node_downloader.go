@@ -208,7 +208,7 @@ func extractTarGz(tarGzFilePath, extractToDir string) error {
 			if err != nil {
 				return err
 			}
-		case tar.TypeReg, tar.TypeRegA:
+		case tar.TypeReg:
 			// 创建文件并写入内容
 			w, err := os.Create(targetPath)
 			if err != nil {
