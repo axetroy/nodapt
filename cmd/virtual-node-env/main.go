@@ -3,9 +3,11 @@ package main
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 
 	VirtualNodeEnvironment "github.com/axetroy/virtual_node_env"
+	"github.com/pkg/errors"
 )
 
 var (
@@ -23,6 +25,7 @@ virtual-node-env [OPTIONS] <COMMAND>
 OPTIONS:
   --help                 Print help information
   --version              Print version information
+  --clean                Clean the virtual node environment
   --node <version>       Specify the version of node to use
 
 SOURCE CODE:
@@ -33,6 +36,7 @@ type Flag struct {
 	// TODO: support parse from meta data
 	Help    bool     `json:"help" long:"help" short:"h"`
 	Version bool     `json:"version" long:"version" short:"v"`
+	Clean   bool     `json:"clean" long:"clean"`
 	Node    string   `json:"node" long:"node"`
 	Cmd     []string `json:"cmd"`
 }
@@ -58,8 +62,10 @@ func parse() Flag {
 			switch true {
 			case arg == "--help", arg == "-h":
 				f.Help = true
-			case arg == "--version", arg == "--version":
+			case arg == "--version", arg == "-v":
 				f.Version = true
+			case arg == "--clean":
+				f.Clean = true
 			case strings.HasPrefix(arg, "--node"):
 				eqIndex := strings.Index(arg, "=")
 
@@ -97,6 +103,14 @@ func run() error {
 
 	if f.Version {
 		println(fmt.Sprintf("%s %s %s", version, commit, date))
+		os.Exit(0)
+	}
+
+	if f.Clean {
+		dir := filepath.Join(os.Getenv("HOME"), "virtual-node-env")
+		if err := os.RemoveAll(dir); err != nil {
+			return errors.WithStack(err)
+		}
 		os.Exit(0)
 	}
 

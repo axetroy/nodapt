@@ -16,7 +16,7 @@ import (
 )
 
 func DownloadNodeJs(version string) (string, error) {
-	virtualNodeEnvPath := filepath.Join(os.Getenv("HOME"), ".vne")
+	virtualNodeEnvPath := filepath.Join(os.Getenv("HOME"), "virtual-node-env")
 
 	fileNameWithoutExt := getNodeFileName(version)
 	fileNameWithExt := getNodeDownloadName(version)

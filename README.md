@@ -48,7 +48,7 @@ $ virtual-node-env --help
 ### Uninstall
 
 ```bash
-$ virtual-node-env clean
+$ virtual-node-env --clean
 # then remove the binary file
 ```
 
