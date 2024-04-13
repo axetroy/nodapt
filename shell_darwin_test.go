@@ -1,7 +1,7 @@
 package virtualnodeenv
 
 import (
-	"strings"
+	"path/filepath"
 	"testing"
 )
 
@@ -15,7 +15,7 @@ func Test_getShell(t *testing.T) {
 
 	t.Logf("getShell() = %v", shellPath)
 
-	if !strings.HasPrefix(shellPath, "/") && shellPath != "go" {
+	if shellPath != "go" && !filepath.IsAbs(shellPath) {
 		t.Errorf("getShell() expected to return an absolute path, got %v", shellPath)
 	}
 
