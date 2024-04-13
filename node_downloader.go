@@ -121,6 +121,8 @@ func downloadFile(url string, fileName string) error {
 
 	bar.SetWriter(os.Stdout)
 
+	defer bar.Finish()
+
 	barReader := bar.NewProxyReader(resp.Body)
 
 	// 将响应体内容复制到文件
