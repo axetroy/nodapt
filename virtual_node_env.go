@@ -16,6 +16,18 @@ type Options struct {
 	Cmd     []string `json:"cmd"`
 }
 
+var virtualNodeEnvDir string
+
+func init() {
+	homeDir, err := os.UserHomeDir()
+
+	if err != nil {
+		panic(err)
+	}
+
+	virtualNodeEnvDir = filepath.Join(homeDir, ".virtual-node-env")
+}
+
 func generateNewEnvs(paths []string) []string {
 	envs := []string{}
 
@@ -30,7 +42,7 @@ func generateNewEnvs(paths []string) []string {
 	return append(envs, "PATH="+newPath)
 }
 
-func Setup(options *Options) error {
+func Run(options *Options) error {
 	nodeEnvPath, err := DownloadNodeJs(options.Version)
 
 	if err != nil {
@@ -94,6 +106,7 @@ func Setup(options *Options) error {
 
 		if exitCode != 0 {
 			os.Exit(exitCode)
+			return nil
 		}
 
 		return errors.WithStack(err)
@@ -147,9 +160,40 @@ func Use(version string) error {
 
 		if exitCode != 0 {
 			os.Exit(exitCode)
+			return nil
 		}
 
 		return errors.WithStack(err)
+	}
+
+	return nil
+}
+
+func Clean() error {
+	if err := os.RemoveAll(virtualNodeEnvDir); err != nil {
+		return errors.WithStack(err)
+	}
+
+	fmt.Fprintf(os.Stderr, "Cleaned up all node versions\n")
+
+	return nil
+}
+
+func List() error {
+	files, err := os.ReadDir(filepath.Join(virtualNodeEnvDir, "node"))
+
+	if err != nil {
+		return errors.WithStack(err)
+	}
+
+	for _, file := range files {
+		fName := file.Name()
+		if file.IsDir() && strings.HasPrefix(fName, "node-v") {
+			n := strings.SplitN(fName, "-", -1)
+
+			version := n[1]
+			println(version)
+		}
 	}
 
 	return nil

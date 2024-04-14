@@ -1,19 +1,22 @@
 virtual-node-env - Virtual node environment, similar to nvm
 
 USAGE:
-virtual-node-env [OPTIONS] <COMMAND>
-virtual-node-env use <VERSION>
+virtual-node-env [OPTIONS] use <VERSION> [COMMAND]
+virtual-node-env [OPTIONS] clean
+virtual-node-env [OPTIONS] ls|list
+
+COMMANDS:
+  use <VERSION> [COMMAND]  Use the specified version of node to run the command
+  clean                    Clean the virtual node environment
+  lslist                   List all the installed node version
 
 OPTIONS:
-  --help                  Print help information
-  --version               Print version information
-  --clean                 Clean the virtual node environment
-  --node <version>        Specify the version of node to use
-  --node <version>        Specify the version of node to use
+  --help                   Print help information
+  --version                Print version information
 
 ENVIRONMENT VARIABLES:
-	NODE_MIRROR             The mirror address of the nodejs download, default is https://nodejs.org/dist/
-                          Chinese users use this mirror by default: https://registry.npmmirror.com/-/binary/node/
+	NODE_MIRROR              The mirror address of the nodejs download, default is https://nodejs.org/dist/
+                           Chinese users use this mirror by default: https://registry.npmmirror.com/-/binary/node/
 
 SOURCE CODE:
   https://github.com/axetroy/virtual-node-env

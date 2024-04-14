@@ -26,18 +26,10 @@ func getEnv(fallback string, keys ...string) string {
 }
 
 func DownloadNodeJs(version string) (string, error) {
-	homeDir, err := os.UserHomeDir()
-
-	if err != nil {
-		return "", errors.WithStack(err)
-	}
-
-	virtualNodeEnvPath := filepath.Join(homeDir, ".virtual-node-env")
-
 	fileNameWithoutExt := getNodeFileName(version)
 	fileNameWithExt := getNodeDownloadName(version)
 
-	destFolder := filepath.Join(virtualNodeEnvPath, "node", fileNameWithoutExt)
+	destFolder := filepath.Join(virtualNodeEnvDir, "node", fileNameWithoutExt)
 
 	// skip download if folder exists
 	if _, err := os.Stat(destFolder); err == nil {
@@ -54,7 +46,7 @@ func DownloadNodeJs(version string) (string, error) {
 
 	url := fmt.Sprintf("%sv%s/%s", nodeMirrorURL, version, fileNameWithExt)
 
-	destFile := filepath.Join(virtualNodeEnvPath, "versions", fileNameWithExt)
+	destFile := filepath.Join(virtualNodeEnvDir, "download", fileNameWithExt)
 
 	// download file
 	if err := downloadFile(url, destFile); err != nil {
@@ -62,7 +54,7 @@ func DownloadNodeJs(version string) (string, error) {
 	}
 
 	// decompress file
-	if err := decompressFile(destFile, filepath.Join(virtualNodeEnvPath, "node")); err != nil {
+	if err := decompressFile(destFile, filepath.Join(virtualNodeEnvDir, "node")); err != nil {
 		return "", nil
 	}
 

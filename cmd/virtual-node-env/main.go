@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"os"
-	"path/filepath"
 	"strings"
 
 	VirtualNodeEnvironment "github.com/axetroy/virtual_node_env"
@@ -20,31 +19,31 @@ func printHelp() {
 	println(`virtual-node-env - Virtual node environment, similar to nvm
 
 USAGE:
-virtual-node-env [OPTIONS] <COMMAND>
-virtual-node-env use <VERSION>
+virtual-node-env [OPTIONS] use <VERSION> [COMMAND]
+virtual-node-env [OPTIONS] clean
+virtual-node-env [OPTIONS] ls|list
+
+COMMANDS:
+  use <VERSION> [COMMAND]  Use the specified version of node to run the command
+  clean                    Clean the virtual node environment
+  lslist                   List all the installed node version
 
 OPTIONS:
-  --help                  Print help information
-  --version               Print version information
-  --clean                 Clean the virtual node environment
-  --node <version>        Specify the version of node to use
-  --node <version>        Specify the version of node to use
+  --help                   Print help information
+  --version                Print version information
 
 ENVIRONMENT VARIABLES:
-	NODE_MIRROR             The mirror address of the nodejs download, default is https://nodejs.org/dist/
-                          Chinese users use this mirror by default: https://registry.npmmirror.com/-/binary/node/
+	NODE_MIRROR              The mirror address of the nodejs download, default is https://nodejs.org/dist/
+                           Chinese users use this mirror by default: https://registry.npmmirror.com/-/binary/node/
 
 SOURCE CODE:
   https://github.com/axetroy/virtual-node-env`)
 }
 
 type Flag struct {
-	// TODO: support parse from meta data
-	Help    bool     `json:"help" long:"help" short:"h"`
-	Version bool     `json:"version" long:"version" short:"v"`
-	Clean   bool     `json:"clean" long:"clean"`
-	Node    string   `json:"node" long:"node"`
-	Cmd     []string `json:"cmd"`
+	Help    bool
+	Version bool
+	Cmd     []string
 }
 
 func parse() Flag {
@@ -70,23 +69,25 @@ func parse() Flag {
 				f.Help = true
 			case arg == "--version", arg == "-v":
 				f.Version = true
-			case arg == "--clean":
-				f.Clean = true
-			case strings.HasPrefix(arg, "--node"):
-				eqIndex := strings.Index(arg, "=")
+			// case strings.HasPrefix(arg, "--node"):
+			// 	eqIndex := strings.Index(arg, "=")
 
-				if eqIndex != -1 {
-					f.Node = arg[eqIndex+1:]
-				} else {
-					if length+1 >= len(args) {
-						panic("missing node version")
-					}
+			// 	if eqIndex != -1 {
+			// 		f.Node = arg[eqIndex+1:]
+			// 	} else {
+			// 		if length+1 >= len(args) {
+			// 			panic("missing node version")
+			// 		}
 
-					f.Node = args[length+1] // take value from next arg
-					length++
-				}
+			// 		f.Node = args[length+1] // take value from next arg
+			// 		length++
+			// 	}
 			case arg == "--":
-				commandIndex = length
+				if commandIndex == -1 {
+					commandIndex = length
+				} else {
+					f.Cmd = append(f.Cmd, arg)
+				}
 			}
 		} else {
 			commandIndex = length
@@ -112,23 +113,8 @@ func run() error {
 		os.Exit(0)
 	}
 
-	if f.Clean {
-
-		homeDir, err := os.UserHomeDir()
-
-		if err != nil {
-			return errors.WithStack(err)
-		}
-
-		dir := filepath.Join(homeDir, ".virtual-node-env")
-		if err := os.RemoveAll(dir); err != nil {
-			return errors.WithStack(err)
-		}
-		os.Exit(0)
-	}
-
 	if len(f.Cmd) == 0 {
-		panic("missing command")
+		return errors.New("missing command")
 	}
 
 	cmd := f.Cmd[0]
@@ -141,26 +127,28 @@ func run() error {
 
 		nodeVersion := strings.TrimPrefix(f.Cmd[1], "v")
 
-		return VirtualNodeEnvironment.Use(nodeVersion)
-	default:
-		nodeVersion := f.Node
+		cmds := f.Cmd[2:]
 
-		if strings.TrimSpace(nodeVersion) == "" {
-			return fmt.Errorf("node version is required")
+		if len(cmds) == 0 {
+			return VirtualNodeEnvironment.Use(nodeVersion)
+		} else {
+			return VirtualNodeEnvironment.Run(&VirtualNodeEnvironment.Options{
+				Version: nodeVersion,
+				Cmd:     cmds,
+			})
 		}
 
-		nodeVersion = strings.TrimPrefix(nodeVersion, "v")
-
-		return VirtualNodeEnvironment.Setup(&VirtualNodeEnvironment.Options{
-			Version: nodeVersion,
-			Cmd:     f.Cmd,
-		})
+	case "ls", "list":
+		return VirtualNodeEnvironment.List()
+	case "clean":
+		return VirtualNodeEnvironment.Clean()
+	default:
+		return errors.Errorf("unknown command: %s", cmd)
 	}
 }
 
 func main() {
 	if err := run(); err != nil {
-		fmt.Println("error:")
 		fmt.Fprintf(os.Stderr, "%+v\n", err)
 		os.Exit(255)
 	}

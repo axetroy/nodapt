@@ -8,6 +8,16 @@
 
 A tool similar to virtualenv, used to set a specific node version for a specified project, which is used to meet the needs of different node versions of different projects.
 
+> [!Motivation]
+>
+> In actual project development, you may encounter situations where several
+> projects depend on different node versions. For example 12.x.y / 16.x.y / 20.x.y.
+>
+> They are not fully compatible, so you need node version management tools, such as nvm.
+> And it requires manual version switching, not automatic.
+> In my project, there are some automatic CIs, so the node version needs to
+> automatically follow the project.
+
 ### Features
 
 - [x] Cross-platform supports. including windows
@@ -17,22 +27,21 @@ A tool similar to virtualenv, used to set a specific node version for a specifie
 ### Usage
 
 ```bash
-$ virtual-node-env --node=16.20.0 node -v
-v16.20.0
-
-$ virtual-node-env --node=18.20.0 node -v
-v18.20.0
-
-$ virtual-node-env use v20.0.0
+# Start a new shell with the specified node version
+$ virtual-node-env use 16.20.0
 $ node -v
-v20.0.0
+16.20.0
+
+# Specify the node version and run the specified command
+$ virtual-node-env use 18.20.0 node -v
+v18.20.0
 ```
 
 or put it into `package.json`
 
 ```json
  "scripts": {
-    "build": "virtual-node-env --node=16.20.0 yarn build"
+    "build": "virtual-node-env use 16.20.0 yarn build"
   },
 ```
 
@@ -55,7 +64,7 @@ $ virtual-node-env --help
 ### Uninstall
 
 ```bash
-$ virtual-node-env --clean
+$ virtual-node-env clean
 # then remove the binary file
 ```
 
