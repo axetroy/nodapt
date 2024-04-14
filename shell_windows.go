@@ -10,7 +10,9 @@ import (
 func getShell() (string, error) {
 	var shellPath string
 
-	if os.Getenv("COMSPEC") != "" {
+	if os.Getenv("SHELL") != "" {
+		shellPath = os.Getenv("SHELL")
+	} else if os.Getenv("COMSPEC") != "" {
 		// Windows
 		comspec := os.Getenv("COMSPEC")
 		if strings.Contains(strings.ToLower(comspec), "powershell") {

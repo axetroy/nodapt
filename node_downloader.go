@@ -29,6 +29,13 @@ func DownloadNodeJs(version string) (string, error) {
 	fileNameWithoutExt := getNodeFileName(version)
 	fileNameWithExt := getNodeDownloadName(version)
 
+	debug("fileNameWithoutExt: %s\n", fileNameWithoutExt)
+	debug("fileNameWithExt: %s\n", fileNameWithExt)
+
+	if fileNameWithoutExt == "" || fileNameWithExt == "" {
+		return "", errors.New("unsupported node version")
+	}
+
 	destFolder := filepath.Join(virtualNodeEnvDir, "node", fileNameWithoutExt)
 
 	// skip download if folder exists
@@ -44,7 +51,11 @@ func DownloadNodeJs(version string) (string, error) {
 
 	nodeMirrorURL := getEnv(defaultMirrorURL, "NODE_MIRROR", "node_mirror")
 
+	debug("nodeMirrorURL: %s\n", nodeMirrorURL)
+
 	url := fmt.Sprintf("%sv%s/%s", nodeMirrorURL, version, fileNameWithExt)
+
+	debug("downloadURL: %s\n", url)
 
 	destFile := filepath.Join(virtualNodeEnvDir, "download", fileNameWithExt)
 

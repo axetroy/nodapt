@@ -37,7 +37,15 @@ func generateNewEnvs(paths []string) []string {
 		}
 	}
 
-	newPath := strings.Join(paths, ":") + ":" + os.Getenv("PATH")
+	var newPath string
+
+	if runtime.GOOS == "windows" {
+		newPath = strings.Join(paths, ";") + ";" + os.Getenv("PATH") + ";" + strings.Join(paths, ";")
+	} else {
+		newPath = strings.Join(paths, ":") + ":" + os.Getenv("PATH") + ":" + strings.Join(paths, ":")
+	}
+
+	debug("newPath: %s\n", newPath)
 
 	return append(envs, "PATH="+newPath)
 }
@@ -78,12 +86,14 @@ func Run(options *Options) error {
 
 				if command == exeName {
 					command = filepath.Join(binaryFileDir, exeName)
+					debug("fallback to command: %s\n", command)
 					break
 				}
 			}
 		} else {
 			if command == exeName {
 				command = filepath.Join(binaryFileDir, exeName)
+				debug("fallback to command: %s\n", command)
 				break
 			}
 		}
@@ -95,7 +105,7 @@ func Run(options *Options) error {
 		process = exec.Command(command, options.Cmd[1:]...)
 	}
 
-	process.Env = generateNewEnvs([]string{filepath.Join(nodeEnvPath, "bin")})
+	process.Env = generateNewEnvs([]string{binaryFileDir})
 	process.Stdin = os.Stdin
 	process.Stdout = os.Stdout
 	process.Stderr = os.Stderr
@@ -122,6 +132,8 @@ func Use(version string) error {
 	if err != nil {
 		return errors.WithStack(err)
 	}
+
+	debug("shell: %s\n", shell)
 
 	nodeEnvPath, err := DownloadNodeJs(version)
 
@@ -150,10 +162,8 @@ func Use(version string) error {
 		return errors.WithStack(err)
 	}
 
-	// 往 shell 中写入内容
-	if _, err = fmt.Fprintf(os.Stdin, "Now you are using node v%s\n", version); err != nil {
-		return errors.WithStack(err)
-	}
+	// Write to the stdin of the shell and ignore error
+	_, _ = fmt.Fprintf(os.Stdin, "Now you are using node v%s\n", version)
 
 	if err := cmd.Wait(); err != nil {
 		exitCode := cmd.ProcessState.ExitCode()
