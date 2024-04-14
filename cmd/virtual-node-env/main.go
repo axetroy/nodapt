@@ -26,7 +26,7 @@ virtual-node-env [OPTIONS] ls|list
 COMMANDS:
   use <VERSION> [COMMAND]  Use the specified version of node to run the command
   clean                    Clean the virtual node environment
-  lslist                   List all the installed node version
+  ls|list                  List all the installed node version
 
 OPTIONS:
   --help                   Print help information
