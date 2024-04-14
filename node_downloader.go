@@ -15,16 +15,6 @@ import (
 	"github.com/pkg/errors"
 )
 
-func getEnv(fallback string, keys ...string) string {
-	for _, key := range keys {
-		if value := os.Getenv(key); value != "" {
-			return value
-		}
-	}
-
-	return fallback
-}
-
 func DownloadNodeJs(version string) (string, error) {
 	fileNameWithoutExt := getNodeFileName(version)
 	fileNameWithExt := getNodeDownloadName(version)
@@ -49,7 +39,7 @@ func DownloadNodeJs(version string) (string, error) {
 		defaultMirrorURL = "https://registry.npmmirror.com/-/binary/node/"
 	}
 
-	nodeMirrorURL := getEnv(defaultMirrorURL, "NODE_MIRROR", "node_mirror")
+	nodeMirrorURL := getEnvsWithFallback(defaultMirrorURL, "NODE_MIRROR")
 
 	debug("nodeMirrorURL: %s\n", nodeMirrorURL)
 

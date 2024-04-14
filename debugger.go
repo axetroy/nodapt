@@ -6,7 +6,7 @@ import (
 )
 
 func debug(format string, a ...any) {
-	if os.Getenv("DEBUG") == "1" {
+	if getEnvsWithFallback("", "DEBUG") == "1" {
 		fmt.Fprintf(os.Stderr, format, a...)
 	}
 }

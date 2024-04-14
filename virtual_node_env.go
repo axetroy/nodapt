@@ -19,8 +19,10 @@ type Options struct {
 var virtualNodeEnvDir string
 
 func init() {
-	if os.Getenv("NODE_ENV_DIR") != "" {
-		virtualNodeEnvDir = os.Getenv("NODE_ENV_DIR")
+	virtualNodeEnvDirFromEnv := getEnvsWithFallback("", "NODE_ENV_DIR")
+
+	if virtualNodeEnvDirFromEnv != "" {
+		virtualNodeEnvDir = virtualNodeEnvDirFromEnv
 		return
 	}
 
