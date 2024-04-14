@@ -8,7 +8,7 @@
 
 A tool similar to virtualenv, used to set a specific node version for a specified project, which is used to meet the needs of different node versions of different projects.
 
-> [!Motivation]
+> [!NOTE]
 >
 > In actual project development, you may encounter situations where several
 > projects depend on different node versions. For example 12.x.y / 16.x.y / 20.x.y.
