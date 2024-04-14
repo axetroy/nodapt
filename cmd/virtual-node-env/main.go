@@ -35,6 +35,8 @@ OPTIONS:
 ENVIRONMENT VARIABLES:
   NODE_MIRROR              The mirror of the nodejs download, defaults to: https://nodejs.org/dist/
                            Chinese users defaults to: https://registry.npmmirror.com/-/binary/node/
+  NODE_ENV_DIR             The directory where the nodejs is stored, defaults to: $HOME/.virtual-node-env
+  DEBUG                    Print debug information
 
 SOURCE CODE:
   https://github.com/axetroy/virtual-node-env`)

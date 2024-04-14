@@ -19,6 +19,11 @@ type Options struct {
 var virtualNodeEnvDir string
 
 func init() {
+	if os.Getenv("NODE_ENV_DIR") != "" {
+		virtualNodeEnvDir = os.Getenv("NODE_ENV_DIR")
+		return
+	}
+
 	homeDir, err := os.UserHomeDir()
 
 	if err != nil {
