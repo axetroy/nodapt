@@ -33,8 +33,8 @@ OPTIONS:
   --version                Print version information
 
 ENVIRONMENT VARIABLES:
-	NODE_MIRROR              The mirror address of the nodejs download, default is https://nodejs.org/dist/
-                           Chinese users use this mirror by default: https://registry.npmmirror.com/-/binary/node/
+  NODE_MIRROR              The mirror of the nodejs download, defaults to: https://nodejs.org/dist/
+                           Chinese users defaults to: https://registry.npmmirror.com/-/binary/node/
 
 SOURCE CODE:
   https://github.com/axetroy/virtual-node-env`)
