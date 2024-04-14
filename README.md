@@ -8,6 +8,10 @@
 
 A tool similar to virtualenv, used to set a specific node version for a specified project, which is used to meet the needs of different node versions of different projects.
 
+It is similar to nvm, but not a replacement for nvm. nvm manages the global node version for you, and can even switch node versions temporarily.
+
+virtual-node-env can also switch node versions, but not globally, but following the project.
+
 > [!NOTE]
 >
 > In actual project development, you may encounter situations where several
@@ -39,9 +43,14 @@ v18.20.0
 
 or put it into `package.json`
 
+```bash
+npm install @axetroy/virtual-node-env --save-exact -D
+```
+
 ```json
  "scripts": {
-    "build": "virtual-node-env use 16.20.0 yarn build"
+    "install-deps": "virtual-node-env use 16.20.0 npm install",
+    "build": "virtual-node-env use 16.20.0 npm build"
   },
 ```
 
