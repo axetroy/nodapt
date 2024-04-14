@@ -10,6 +10,7 @@
   "files": [
     "bin/virtual-node-env",
     "lib/index.js",
+    "lib/index.d.js",
     "README.md",
     "LICENSE"
   ],
@@ -17,23 +18,8 @@
   "optionalDependencies": {
     "@axetroy/virtual-node-env-darwin-amd64": "0.1.0",
     "@axetroy/virtual-node-env-darwin-arm64": "0.1.0",
-    "@axetroy/virtual-node-env-linux-386": "0.1.0",
-    "@axetroy/virtual-node-env-linux-arm": "0.1.0",
     "@axetroy/virtual-node-env-linux-arm64": "0.1.0",
     "@axetroy/virtual-node-env-linux-amd64": "0.1.0",
-    "@axetroy/virtual-node-env-linux-mips": "0.1.0",
-    "@axetroy/virtual-node-env-linux-mipsel": "0.1.0",
-    "@axetroy/virtual-node-env-linux-mips64": "0.1.0",
-    "@axetroy/virtual-node-env-linux-mips64el": "0.1.0",
-    "@axetroy/virtual-node-env-freebsd-386": "0.1.0",
-    "@axetroy/virtual-node-env-freebsd-arm": "0.1.0",
-    "@axetroy/virtual-node-env-freebsd-arm64": "0.1.0",
-    "@axetroy/virtual-node-env-freebsd-amd64": "0.1.0",
-    "@axetroy/virtual-node-env-openbsd-386": "0.1.0",
-    "@axetroy/virtual-node-env-openbsd-arm": "0.1.0",
-    "@axetroy/virtual-node-env-openbsd-arm64": "0.1.0",
-    "@axetroy/virtual-node-env-openbsd-amd64": "0.1.0",
-    "@axetroy/virtual-node-env-windows-arm": "0.1.0",
     "@axetroy/virtual-node-env-windows-arm64": "0.1.0",
     "@axetroy/virtual-node-env-windows-amd64": "0.1.0"
   }
