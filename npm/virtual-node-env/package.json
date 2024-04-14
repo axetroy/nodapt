@@ -10,7 +10,7 @@
   "files": [
     "bin/virtual-node-env",
     "lib/index.js",
-    "lib/index.d.js",
+    "lib/index.d.ts",
     "README.md",
     "LICENSE"
   ],
