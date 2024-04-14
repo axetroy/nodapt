@@ -54,6 +54,38 @@ npm install @axetroy/virtual-node-env --save-exact -D
   },
 ```
 
+more usage, please run `virtual-node-env --help`
+
+```
+$ virtual-node-env --help
+virtual-node-env - Virtual node environment, similar to nvm
+
+USAGE:
+virtual-node-env [OPTIONS] use <VERSION> [COMMAND]
+virtual-node-env [OPTIONS] clean
+virtual-node-env [OPTIONS] ls|list
+
+COMMANDS:
+  use <VERSION> [COMMAND]  Use the specified version of node to run the command
+  clean                    Clean the virtual node environment
+  ls|list                  List all the installed node version
+  ls-remote|list-remote    List all the available node version
+
+OPTIONS:
+  --help                   Print help information
+  --version                Print version information
+
+ENVIRONMENT VARIABLES:
+  NODE_MIRROR              The mirror of the nodejs download, defaults to: https://nodejs.org/dist/
+                           Chinese users defaults to: https://registry.npmmirror.com/-/binary/node/
+  NODE_ENV_DIR             The directory where the nodejs is stored, defaults to: $HOME/.virtual-node-env
+  DEBUG                    Print debug information
+
+SOURCE CODE:
+  https://github.com/axetroy/virtual-node-env
+
+```
+
 ### Install
 
 1. [Cask](https://github.com/cask-pkg/cask.rs) (Mac/Linux/Windows)

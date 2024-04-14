@@ -15,6 +15,20 @@ import (
 	"github.com/pkg/errors"
 )
 
+func getNodeMirrorURL() string {
+	defaultMirrorURL := "https://nodejs.org/dist/"
+
+	if strings.Contains(os.Getenv("LANG"), "zh_CN") {
+		defaultMirrorURL = "https://registry.npmmirror.com/-/binary/node/"
+	}
+
+	nodeMirrorURL := getEnvsWithFallback(defaultMirrorURL, "NODE_MIRROR")
+
+	debug("nodeMirrorURL: %s\n", nodeMirrorURL)
+
+	return nodeMirrorURL
+}
+
 func DownloadNodeJs(version string) (string, error) {
 	fileNameWithoutExt := getNodeFileName(version)
 	fileNameWithExt := getNodeDownloadName(version)
@@ -33,17 +47,7 @@ func DownloadNodeJs(version string) (string, error) {
 		return destFolder, nil
 	}
 
-	defaultMirrorURL := "https://nodejs.org/dist/"
-
-	if strings.Contains(os.Getenv("LANG"), "zh_CN") {
-		defaultMirrorURL = "https://registry.npmmirror.com/-/binary/node/"
-	}
-
-	nodeMirrorURL := getEnvsWithFallback(defaultMirrorURL, "NODE_MIRROR")
-
-	debug("nodeMirrorURL: %s\n", nodeMirrorURL)
-
-	url := fmt.Sprintf("%sv%s/%s", nodeMirrorURL, version, fileNameWithExt)
+	url := fmt.Sprintf("%sv%s/%s", getNodeMirrorURL(), version, fileNameWithExt)
 
 	debug("downloadURL: %s\n", url)
 

@@ -27,6 +27,7 @@ COMMANDS:
   use <VERSION> [COMMAND]  Use the specified version of node to run the command
   clean                    Clean the virtual node environment
   ls|list                  List all the installed node version
+  ls-remote|list-remote    List all the available node version
 
 OPTIONS:
   --help                   Print help information
@@ -142,6 +143,8 @@ func run() error {
 
 	case "ls", "list":
 		return VirtualNodeEnvironment.List()
+	case "ls-remote", "list-remote":
+		return VirtualNodeEnvironment.ListRemote()
 	case "clean":
 		return VirtualNodeEnvironment.Clean()
 	default:

@@ -2,12 +2,16 @@ package virtualnodeenv
 
 import (
 	"fmt"
+	"net/http"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"runtime"
+	"sort"
 	"strings"
 
+	"github.com/PuerkitoBio/goquery"
+	"github.com/hashicorp/go-version"
 	"github.com/pkg/errors"
 )
 
@@ -211,6 +215,56 @@ func List() error {
 			version := n[1]
 			println(version)
 		}
+	}
+
+	return nil
+}
+
+func ListRemote() error {
+	// Request the HTML page.
+	res, err := http.Get("https://nodejs.org/dist/")
+
+	if err != nil {
+		return errors.WithStack(err)
+	}
+
+	defer res.Body.Close()
+
+	if res.StatusCode != 200 {
+		return errors.Errorf("status code error: %d %s", res.StatusCode, res.Status)
+	}
+
+	// Load the HTML document
+	doc, err := goquery.NewDocumentFromReader(res.Body)
+	if err != nil {
+		return errors.WithStack(err)
+	}
+
+	vs := []*version.Version{}
+
+	firstStableVersion, _ := version.NewVersion("v1.0.0")
+
+	doc.Find("a").Each(func(i int, s *goquery.Selection) {
+		text := strings.TrimRight(s.Text(), "/")
+
+		if strings.HasPrefix(text, "v") {
+			ver, err := version.NewVersion(text)
+
+			if err != nil {
+				return
+			}
+
+			if ver.GreaterThanOrEqual(firstStableVersion) {
+				vs = append(vs, ver)
+			}
+		}
+	})
+
+	// 对版本号进行排序
+	sort.Sort(version.Collection(vs))
+
+	for _, v := range vs {
+		println(v.String())
 	}
 
 	return nil
