@@ -1,6 +1,7 @@
 package virtualnodeenv
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"os"
@@ -268,4 +269,24 @@ func ListRemote() error {
 	}
 
 	return nil
+}
+
+type Config struct {
+	Node string `json:"node"`
+}
+
+func LoadConfig(filePath string) (*Config, error) {
+	content, err := os.ReadFile(filePath)
+
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	c := &Config{}
+
+	if err := json.Unmarshal(content, c); err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	return nil, nil
 }

@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 
 	VirtualNodeEnvironment "github.com/axetroy/virtual_node_env"
@@ -33,6 +34,7 @@ COMMANDS:
 OPTIONS:
   --help                   Print help information
   --version                Print version information
+	--config                 Specify the configuration file. Detected .virtual-node-env.json automatically if not specified.
 
 ENVIRONMENT VARIABLES:
   NODE_MIRROR              The mirror of the nodejs download, defaults to: https://nodejs.org/dist/
@@ -47,10 +49,11 @@ SOURCE CODE:
 type Flag struct {
 	Help    bool
 	Version bool
+	Config  *string
 	Cmd     []string
 }
 
-func parse() Flag {
+func parse() (*Flag, error) {
 	args := os.Args[1:]
 
 	f := Flag{}
@@ -73,19 +76,22 @@ func parse() Flag {
 				f.Help = true
 			case arg == "--version", arg == "-v":
 				f.Version = true
-			// case strings.HasPrefix(arg, "--node"):
-			// 	eqIndex := strings.Index(arg, "=")
+			case strings.HasPrefix(arg, "--config"):
+				eqIndex := strings.Index(arg, "=")
 
-			// 	if eqIndex != -1 {
-			// 		f.Node = arg[eqIndex+1:]
-			// 	} else {
-			// 		if length+1 >= len(args) {
-			// 			panic("missing node version")
-			// 		}
+				if eqIndex != -1 {
+					val := arg[eqIndex+1:]
 
-			// 		f.Node = args[length+1] // take value from next arg
-			// 		length++
-			// 	}
+					f.Config = &val
+				} else {
+					if length+1 >= len(args) {
+						panic("missing value for --config flag")
+					}
+
+					val := args[length+1] // take value from next arg
+					f.Config = &val
+					length++
+				}
 			case arg == "--":
 				if commandIndex == -1 {
 					commandIndex = length
@@ -101,11 +107,33 @@ func parse() Flag {
 		length++
 	}
 
-	return f
+	// Detect the configuration file if not specified
+	if f.Config == nil {
+		pwd, err := os.Getwd()
+
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+
+		defaultConfigFile := filepath.Join(pwd, ".virtual-node-env.json")
+
+		if _, err := os.Stat(defaultConfigFile); err != nil {
+			if !os.IsNotExist(err) {
+				return nil, errors.WithStack(err)
+			}
+		}
+
+		f.Config = &defaultConfigFile
+	}
+
+	return &f, nil
 }
 
 func run() error {
-	f := parse()
+	f, err := parse()
+	if err != nil {
+		return errors.WithStack(err)
+	}
 
 	if f.Help {
 		printHelp()
@@ -131,14 +159,14 @@ func run() error {
 
 		nodeVersion := strings.TrimPrefix(f.Cmd[1], "v")
 
-		cmds := f.Cmd[2:]
+		commands := f.Cmd[2:]
 
-		if len(cmds) == 0 {
+		if len(commands) == 0 {
 			return VirtualNodeEnvironment.Use(nodeVersion)
 		} else {
 			return VirtualNodeEnvironment.Run(&VirtualNodeEnvironment.Options{
 				Version: nodeVersion,
-				Cmd:     cmds,
+				Cmd:     commands,
 			})
 		}
 
@@ -149,6 +177,26 @@ func run() error {
 	case "clean":
 		return VirtualNodeEnvironment.Clean()
 	default:
+		if f.Config != nil {
+			config, err := VirtualNodeEnvironment.LoadConfig(*f.Config)
+			if err != nil {
+				return errors.WithStack(err)
+			}
+
+			if config.Node == "" {
+				return errors.New("missing node field in the configuration file")
+			}
+
+			commands := f.Cmd
+
+			// run command
+			if len(commands) > 0 {
+				return VirtualNodeEnvironment.Run(&VirtualNodeEnvironment.Options{
+					Version: config.Node,
+					Cmd:     commands,
+				})
+			}
+		}
 		return errors.Errorf("unknown command: %s", cmd)
 	}
 }
@@ -156,6 +204,6 @@ func run() error {
 func main() {
 	if err := run(); err != nil {
 		fmt.Fprintf(os.Stderr, "%+v\n", err)
-		os.Exit(255)
+		os.Exit(1)
 	}
 }
