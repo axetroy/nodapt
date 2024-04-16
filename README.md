@@ -64,6 +64,7 @@ USAGE:
 virtual-node-env [OPTIONS] use <VERSION> [COMMAND]
 virtual-node-env [OPTIONS] clean
 virtual-node-env [OPTIONS] ls|list
+virtual-node-env [OPTIONS] ls-remote|list-remote
 
 COMMANDS:
   use <VERSION> [COMMAND]  Use the specified version of node to run the command
@@ -74,12 +75,13 @@ COMMANDS:
 OPTIONS:
   --help                   Print help information
   --version                Print version information
+	--config                 Specify the configuration file. Detected .virtual-node-env.json automatically if not specified.
 
 ENVIRONMENT VARIABLES:
   NODE_MIRROR              The mirror of the nodejs download, defaults to: https://nodejs.org/dist/
                            Chinese users defaults to: https://registry.npmmirror.com/-/binary/node/
   NODE_ENV_DIR             The directory where the nodejs is stored, defaults to: $HOME/.virtual-node-env
-  DEBUG                    Print debug information
+  DEBUG                    Print debug information when set DEBUG=1
 
 SOURCE CODE:
   https://github.com/axetroy/virtual-node-env
@@ -88,7 +90,7 @@ SOURCE CODE:
 
 ### Install
 
-1. [Cask](https://github.com/cask-pkg/cask.rs) (Mac/Linux/Windows)
+1. Install via [Cask](https://github.com/cask-pkg/cask.rs) (Mac/Linux/Windows)
 
 ```bash
 $ cask install github.com/axetroy/virtual-node-env
@@ -107,6 +109,23 @@ $ virtual-node-env --help
 ```bash
 $ virtual-node-env clean
 # then remove the binary file
+```
+
+### Configuration
+
+Your can specify the configuration file by `--config` option, or put a `.virtual-node-env.json` file in the root of your project.
+
+```json
+{
+  "node": "v16.20.0"
+}
+```
+
+then you can run `virtual-node-env` without specify the version
+
+```bash
+$ virtual-node-env node -v
+v16.20.0
 ```
 
 ### License
