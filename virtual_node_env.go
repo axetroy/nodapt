@@ -288,5 +288,5 @@ func LoadConfig(filePath string) (*Config, error) {
 		return nil, errors.WithStack(err)
 	}
 
-	return nil, nil
+	return c, nil
 }
