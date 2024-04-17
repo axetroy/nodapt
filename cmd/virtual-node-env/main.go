@@ -183,7 +183,9 @@ func run() error {
 				return errors.WithStack(err)
 			}
 
-			if config.Node == "" {
+			nodeVersion := strings.TrimPrefix(config.Node, "v")
+
+			if nodeVersion == "" {
 				return errors.New("missing node field in the configuration file")
 			}
 
@@ -192,7 +194,7 @@ func run() error {
 			// run command
 			if len(commands) > 0 {
 				return VirtualNodeEnvironment.Run(&VirtualNodeEnvironment.Options{
-					Version: config.Node,
+					Version: nodeVersion,
 					Cmd:     commands,
 				})
 			}
