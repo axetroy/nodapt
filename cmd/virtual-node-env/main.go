@@ -205,7 +205,11 @@ func run() error {
 
 func main() {
 	if err := run(); err != nil {
-		fmt.Fprintf(os.Stderr, "%+v\n", err)
+		if os.Getenv("DEBUG") == "1" {
+			fmt.Fprintf(os.Stderr, "%+v\n", err)
+		} else {
+			fmt.Fprintf(os.Stderr, "%s\n", err.Error())
+		}
 		os.Exit(1)
 	}
 }
