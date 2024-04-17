@@ -34,7 +34,7 @@ COMMANDS:
 OPTIONS:
   --help                   Print help information
   --version                Print version information
-	--config                 Specify the configuration file. Detected .virtual-node-env.json automatically if not specified.
+  --config                 Specify the configuration file. Detected .virtual-node-env.json automatically if not specified.
 
 ENVIRONMENT VARIABLES:
   NODE_MIRROR              The mirror of the nodejs download, defaults to: https://nodejs.org/dist/
