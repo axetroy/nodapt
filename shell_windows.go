@@ -19,14 +19,12 @@ func getShell() (string, error) {
 			shellPath = comspec
 		} else if strings.Contains(strings.ToLower(comspec), "cmd") {
 			shellPath = comspec
-		} else {
-			return "", errors.New("Unknown shell")
 		}
 	}
 
-	if shellPath != "" {
-		return shellPath, nil
+	if shellPath == "" {
+		return "", errors.New("Unknown shell")
 	}
 
-	return "", errors.New("Unknown shell")
+	return shellPath, nil
 }
