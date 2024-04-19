@@ -285,7 +285,7 @@ func LoadConfig(filePath string) (*Config, error) {
 	c := &Config{}
 
 	if err := json.Unmarshal(content, c); err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errors.WithMessagef(err, "Read config file %s failed", filePath)
 	}
 
 	return c, nil
