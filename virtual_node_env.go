@@ -21,9 +21,14 @@ type Options struct {
 	Cmd     []string `json:"cmd"`
 }
 
+var envPathDelimiter = ":"
 var virtualNodeEnvDir string
 
 func init() {
+	if runtime.GOOS == "windows" {
+		envPathDelimiter = ";"
+	}
+
 	virtualNodeEnvDirFromEnv := getEnvsWithFallback("", "NODE_ENV_DIR")
 
 	if virtualNodeEnvDirFromEnv != "" {
@@ -38,28 +43,6 @@ func init() {
 	}
 
 	virtualNodeEnvDir = filepath.Join(homeDir, ".virtual-node-env")
-}
-
-func generateNewEnvs(paths []string) []string {
-	envs := []string{}
-
-	for _, env := range os.Environ() {
-		if !strings.HasPrefix(env, "PATH=") {
-			envs = append(envs, env)
-		}
-	}
-
-	var newPath string
-
-	if runtime.GOOS == "windows" {
-		newPath = strings.Join(paths, ";") + ";" + os.Getenv("PATH") + ";" + strings.Join(paths, ";")
-	} else {
-		newPath = strings.Join(paths, ":") + ":" + os.Getenv("PATH") + ":" + strings.Join(paths, ":")
-	}
-
-	debug("newPath: %s\n", newPath)
-
-	return append(envs, "PATH="+newPath)
 }
 
 func Run(options *Options) error {
@@ -81,35 +64,11 @@ func Run(options *Options) error {
 
 	command := options.Cmd[0]
 
-	files, err := os.ReadDir(binaryFileDir)
+	path := os.Getenv("PATH")
 
-	if err != nil {
-		return errors.WithStack(err)
-	}
+	newPath := binaryFileDir + envPathDelimiter + path
 
-	// find the command in the binary file directory
-	for _, nodeCommand := range files {
-		exeName := nodeCommand.Name()
-
-		if runtime.GOOS == "windows" {
-			if strings.HasSuffix(exeName, ".cmd") || strings.HasSuffix(exeName, ".exe") {
-				exeName = strings.TrimSuffix(exeName, ".cmd")
-				exeName = strings.TrimSuffix(exeName, ".exe")
-
-				if command == exeName {
-					command = filepath.Join(binaryFileDir, exeName)
-					debug("fallback to command: %s\n", command)
-					break
-				}
-			}
-		} else {
-			if command == exeName {
-				command = filepath.Join(binaryFileDir, exeName)
-				debug("fallback to command: %s\n", command)
-				break
-			}
-		}
-	}
+	os.Setenv("PATH", newPath)
 
 	if len(options.Cmd) == 1 {
 		process = exec.Command(command)
@@ -117,7 +76,6 @@ func Run(options *Options) error {
 		process = exec.Command(command, options.Cmd[1:]...)
 	}
 
-	process.Env = generateNewEnvs([]string{binaryFileDir})
 	process.Stdin = os.Stdin
 	process.Stdout = os.Stdout
 	process.Stderr = os.Stderr
@@ -164,7 +122,13 @@ func Use(version string) error {
 		binaryFileDir = filepath.Join(nodeEnvPath, "bin")
 	}
 
-	cmd.Env = generateNewEnvs([]string{binaryFileDir})
+	// 获取当前的 PATH 变量
+	path := os.Getenv("PATH")
+
+	newPath := binaryFileDir + envPathDelimiter + path
+	// 设置新的 PATH 变量
+	os.Setenv("PATH", newPath)
+
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	cmd.Stdin = os.Stdin
