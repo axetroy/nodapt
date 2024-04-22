@@ -6,7 +6,9 @@
   "author": "Axetroy <axetroy.dev@gmail.com>",
   "license": "Anti-996",
   "private": false,
-  "bin": "bin/virtual-node-env",
+  "bin": {
+    "virtual-node-env": "bin/virtual-node-env"
+  },
   "files": [
     "bin/virtual-node-env",
     "lib/index.js",

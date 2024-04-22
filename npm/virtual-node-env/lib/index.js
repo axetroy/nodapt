@@ -32,9 +32,17 @@ const prebuildPackageName = archMap[arch];
 
 if (!prebuildPackageName) throw ERR_NOT_SUPPORT;
 
-const binaryPackageDir = path.dirname(
-  require.resolve(`@axetroy/${prebuildPackageName}/package.json`)
-);
+const binaryPackageDir = (() => {
+  try {
+    path.dirname(
+      require.resolve(`@axetroy/${prebuildPackageName}/package.json`)
+    );
+  } catch (err) {
+    throw new Error(
+      `Can't find the binary package "${prebuildPackageName}" in the node_modules, try to reinstall package.`
+    );
+  }
+})();
 
 const executableFileName =
   "virtual-node-env" + (platform === "win32" ? ".exe" : "");
