@@ -128,6 +128,10 @@ $ virtual-node-env node -v
 v16.20.0
 ```
 
+### Similar Projects
+
+[mise](https://github.com/jdx/mise)
+
 ### License
 
 The [Anti-996 License](LICENSE)
