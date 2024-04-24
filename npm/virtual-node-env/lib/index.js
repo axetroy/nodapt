@@ -34,7 +34,7 @@ if (!prebuildPackageName) throw ERR_NOT_SUPPORT;
 
 const binaryPackageDir = (() => {
   try {
-    path.dirname(
+    return path.dirname(
       require.resolve(`@axetroy/${prebuildPackageName}/package.json`)
     );
   } catch (err) {
