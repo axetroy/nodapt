@@ -132,6 +132,7 @@ v16.20.0
 
 [https://github.com/jdx/mise](https://github.com/jdx/mise)
 [https://github.com/gvcgo/version-manager](https://github.com/gvcgo/version-manager)
+[https://github.com/version-fox/vfox](https://github.com/version-fox/vfox)
 
 ### License
 
