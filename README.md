@@ -130,7 +130,8 @@ v16.20.0
 
 ### Similar Projects
 
-[mise](https://github.com/jdx/mise)
+[https://github.com/jdx/mise](https://github.com/jdx/mise)
+[https://github.com/gvcgo/version-manager](https://github.com/gvcgo/version-manager)
 
 ### License
 
