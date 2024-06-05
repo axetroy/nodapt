@@ -8,6 +8,7 @@ virtual-node-env [OPTIONS] ls-remote|list-remote
 
 COMMANDS:
   use <VERSION> [COMMAND]  Use the specified version of node to run the command
+  rm|remove <VERSION>      Remove the specified version of node that installed by virtual-node-env
   clean                    Clean the virtual node environment
   ls|list                  List all the installed node version
   ls-remote|list-remote    List all the available node version

@@ -27,6 +27,7 @@ virtual-node-env [OPTIONS] ls-remote|list-remote
 
 COMMANDS:
   use <VERSION> [COMMAND]  Use the specified version of node to run the command
+  rm|remove <VERSION>      Remove the specified version of node that installed by virtual-node-env
   clean                    Clean the virtual node environment
   ls|list                  List all the installed node version
   ls-remote|list-remote    List all the available node version
@@ -169,6 +170,14 @@ func run() error {
 				Cmd:     commands,
 			})
 		}
+	case "rm", "remove":
+		if len(f.Cmd) == 1 {
+			return fmt.Errorf("missing node version")
+		}
+
+		nodeVersion := strings.TrimPrefix(f.Cmd[1], "v")
+
+		return VirtualNodeEnvironment.Remove(nodeVersion)
 
 	case "ls", "list":
 		return VirtualNodeEnvironment.List()

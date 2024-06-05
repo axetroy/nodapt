@@ -155,6 +155,20 @@ func Use(version string) error {
 	return nil
 }
 
+func Remove(version string) error {
+	target := getNodeFileName(version)
+
+	dest := filepath.Join(virtualNodeEnvDir, "node", target)
+
+	// 检查文件是否存在
+	if _, err := os.Stat(dest); os.IsNotExist(err) {
+		fmt.Fprintf(os.Stderr, "Node version %s not found\n", version)
+		return nil
+	}
+
+	return os.RemoveAll(dest)
+}
+
 func Clean() error {
 	if err := os.RemoveAll(virtualNodeEnvDir); err != nil {
 		return errors.WithStack(err)

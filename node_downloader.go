@@ -190,92 +190,65 @@ func unzip(zipFilePath, extractToDir string) error {
 }
 
 func extractTarGz(tarGzFilePath, extractToDir string) error {
-	// 打开 .tar.gz 文件
-	f, err := os.Open(tarGzFilePath)
+	// 打开压缩文件
+	file, err := os.Open(tarGzFilePath)
 	if err != nil {
 		return err
 	}
-	defer f.Close()
+	defer file.Close()
 
-	// 创建 gzip 读取器
-	gz, err := gzip.NewReader(f)
+	// 创建一个 gzip.Reader 从压缩文件中读取数据
+	gz, err := gzip.NewReader(file)
 	if err != nil {
 		return err
 	}
 	defer gz.Close()
 
-	// 创建 tar 读取器
-	tr := tar.NewReader(gz)
+	// 创建一个 tar.Reader 从 gzip.Reader 中读取数据
+	tarReader := tar.NewReader(gz)
 
-	// 创建硬链接映射
-	linkMap := make(map[string]string)
-
-	// 遍历 tar 文件中的文件并解压缩
+	// 逐个文件解压并写入目标目录
 	for {
-		header, err := tr.Next()
+		header, err := tarReader.Next()
 		if err == io.EOF {
-			break // 所有文件都已解压完毕
+			break
 		}
 		if err != nil {
 			return err
 		}
 
-		// 构建解压后的文件路径
-		targetPath := filepath.Join(extractToDir, header.Name)
+		// 目标文件路径
+		target := filepath.Join(extractToDir, header.Name)
 
 		switch header.Typeflag {
 		case tar.TypeDir:
-			// 创建目录
-			err = os.MkdirAll(targetPath, os.FileMode(header.Mode))
-			if err != nil {
+			// 如果是目录，创建目录
+			if err := os.MkdirAll(target, os.FileMode(header.Mode)); err != nil {
 				return err
 			}
 		case tar.TypeReg:
-			// 创建文件并写入内容
-			w, err := os.Create(targetPath)
+			// 如果是普通文件，创建并写入文件内容
+			file, err := os.OpenFile(target, os.O_CREATE|os.O_RDWR, os.FileMode(header.Mode))
 			if err != nil {
 				return err
 			}
-			_, err = io.Copy(w, tr)
-			if err != nil {
+			defer file.Close()
+
+			if _, err := io.Copy(file, tarReader); err != nil {
 				return err
-			}
-			w.Close()
-			// 设置可执行文件权限
-			if header.Mode&0111 != 0 { // 文件有可执行权限
-				err = os.Chmod(targetPath, os.FileMode(header.Mode)|0111)
-				if err != nil {
-					return err
-				}
 			}
 		case tar.TypeSymlink:
-			// 创建软链接
-			err = os.Symlink(header.Linkname, targetPath)
-			if err != nil {
-				return err
-			}
-			// 设置软链接权限
-			linkMode := os.FileMode(header.Mode)
-
-			if header.Mode&0111 != 0 { // 链接有可执行权限
-				linkMode |= 0111
-			}
-
-			err = os.Chmod(targetPath, linkMode)
-			if err != nil {
+			// 如果是软链接，创建软链接
+			if err := os.Symlink(header.Linkname, target); err != nil {
 				return err
 			}
 		case tar.TypeLink:
-			// 存储硬链接映射
-			linkMap[targetPath] = header.Linkname
-		}
-	}
-
-	// 创建硬链接
-	for newLink, origLink := range linkMap {
-		err := os.Link(origLink, newLink)
-		if err != nil {
-			return err
+			// 如果是硬链接，创建硬链接
+			if err := os.Link(filepath.Join(extractToDir, header.Linkname), target); err != nil {
+				return err
+			}
+		default:
+			return fmt.Errorf("Unsupported type: %v in %s", header.Typeflag, header.Name)
 		}
 	}
 
