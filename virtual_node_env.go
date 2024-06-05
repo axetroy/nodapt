@@ -180,6 +180,10 @@ func Clean() error {
 }
 
 func List() error {
+	if _, err := os.Stat(filepath.Join(virtualNodeEnvDir, "node")); os.IsNotExist(err) {
+		return nil
+	}
+
 	files, err := os.ReadDir(filepath.Join(virtualNodeEnvDir, "node"))
 
 	if err != nil {
