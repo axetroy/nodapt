@@ -81,14 +81,6 @@ func Run(options *Options) error {
 	process.Stderr = os.Stderr
 
 	if err := process.Run(); err != nil {
-
-		exitCode := process.ProcessState.ExitCode()
-
-		if exitCode != 0 {
-			os.Exit(exitCode)
-			return nil
-		}
-
 		return errors.WithStack(err)
 	}
 
@@ -142,13 +134,6 @@ func Use(version string) error {
 	_, _ = fmt.Fprintf(os.Stdin, "Now you are using node v%s\n", version)
 
 	if err := cmd.Wait(); err != nil {
-		exitCode := cmd.ProcessState.ExitCode()
-
-		if exitCode != 0 {
-			os.Exit(exitCode)
-			return nil
-		}
-
 		return errors.WithStack(err)
 	}
 
