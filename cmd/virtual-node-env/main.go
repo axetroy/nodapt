@@ -54,6 +54,41 @@ type Flag struct {
 	Cmd     []string
 }
 
+// 检查文件是否存在
+func fileExists(filePath string) bool {
+	_, err := os.Stat(filePath)
+	return err == nil
+}
+
+// 递归向上查找配置文件
+func findConfigFile(fileName string) (string, error) {
+	pwd, err := os.Getwd()
+
+	if err != nil {
+		return "", errors.WithStack(err)
+	}
+
+	defaultConfigFile := filepath.Join(pwd, ".virtual-node-env.json")
+
+	for {
+		VirtualNodeEnvironment.Debug("Find config file in '%s'\n", pwd)
+
+		configFilePath := filepath.Join(pwd, fileName)
+		if fileExists(configFilePath) {
+			return configFilePath, nil
+		}
+
+		// 获取上一级目录
+		parentDir := filepath.Dir(pwd)
+		if parentDir == pwd {
+			break // 已经到达根目录
+		}
+		pwd = parentDir
+	}
+
+	return defaultConfigFile, nil
+}
+
 func parse() (*Flag, error) {
 	args := os.Args[1:]
 
@@ -110,21 +145,15 @@ func parse() (*Flag, error) {
 
 	// Detect the configuration file if not specified
 	if f.Config == nil {
-		pwd, err := os.Getwd()
+		configFilePath, err := findConfigFile("virtual-node-env.json")
 
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
 
-		defaultConfigFile := filepath.Join(pwd, ".virtual-node-env.json")
+		VirtualNodeEnvironment.Debug("Use configuration file: %s\n", configFilePath)
 
-		if _, err := os.Stat(defaultConfigFile); err != nil {
-			if !os.IsNotExist(err) {
-				return nil, errors.WithStack(err)
-			}
-		}
-
-		f.Config = &defaultConfigFile
+		f.Config = &configFilePath
 	}
 
 	return &f, nil
@@ -218,6 +247,7 @@ func main() {
 			fmt.Fprintf(os.Stderr, "%+v\n", err)
 		} else {
 			fmt.Fprintf(os.Stderr, "%s\n", err.Error())
+			fmt.Fprintln(os.Stderr, "Print debug information when set DEBUG=1")
 		}
 		os.Exit(1)
 	}

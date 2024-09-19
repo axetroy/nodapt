@@ -95,7 +95,7 @@ func Use(version string) error {
 		return errors.WithStack(err)
 	}
 
-	debug("shell: %s\n", shell)
+	Debug("shell: %s\n", shell)
 
 	nodeEnvPath, err := DownloadNodeJs(version)
 
