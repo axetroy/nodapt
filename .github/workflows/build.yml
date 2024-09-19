@@ -26,7 +26,7 @@ jobs:
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v3
         with:
-          version: v1.56.2
+          version: v1.16.0
           args: -v --timeout 5m0s
 
       - name: Format
