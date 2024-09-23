@@ -41,53 +41,46 @@ $ virtual-node-env use 18.20.0 node -v
 v18.20.0
 ```
 
-or put it into `package.json`
+### Integrate into your NodeJS project
+
+Add NodeJS version constraint in `package.json`.
+
+```diff
+ "engines": {
++    "node": "^20.x.x"
+ }
+```
+
+> [!NOTE]
+>
+> In actual project development, you may encounter situations where several
+> projects depend on different node versions. For example 12.x.y / 16.x.y / 20.x.y.
+>
+> They are not fully compatible, so you need node version management tools, such as nvm.
+> And it requires manual version switching, not automatic.
+> In my project, there are some automatic CIs, so the node version needs to
+> automatically follow the project.
+
+and then append the `virtual-node-env` command to npm script.
+
+```diff
+{
+  "scripts": {
+-    "install-deps": "npm install",
++    "install-deps": "virtual-node-env npm install",
+-    "dev": "vite dev"
++    "dev": "virtual-node-env vite dev"
+  }
+}
+```
+
+install npm dependencies
 
 ```bash
-npm install @axetroy/virtual-node-env --save-exact -D
+npm run install-deps
 ```
 
-```json
- "scripts": {
-    "install-deps": "virtual-node-env use 16.20.0 npm install",
-    "build": "virtual-node-env use 16.20.0 npm build"
-  },
-```
-
-more usage, please run `virtual-node-env --help`
-
-```
-$ virtual-node-env --help
-virtual-node-env - Virtual node environment, similar to nvm
-
-USAGE:
-virtual-node-env [OPTIONS] use <VERSION> [COMMAND]
-virtual-node-env [OPTIONS] clean
-virtual-node-env [OPTIONS] ls|list
-virtual-node-env [OPTIONS] ls-remote|list-remote
-
-COMMANDS:
-  use <VERSION> [COMMAND]  Use the specified version of node to run the command
-  rm|remove <VERSION>      Remove the specified version of node that installed by virtual-node-env
-  clean                    Clean the virtual node environment
-  ls|list                  List all the installed node version
-  ls-remote|list-remote    List all the available node version
-
-OPTIONS:
-  --help                   Print help information
-  --version                Print version information
-  --config                 Specify the configuration file. Detected .virtual-node-env.json automatically if not specified.
-
-ENVIRONMENT VARIABLES:
-  NODE_MIRROR              The mirror of the nodejs download, defaults to: https://nodejs.org/dist/
-                           Chinese users defaults to: https://registry.npmmirror.com/-/binary/node/
-  NODE_ENV_DIR             The directory where the nodejs is stored, defaults to: $HOME/.virtual-node-env
-  DEBUG                    Print debug information when set DEBUG=1
-
-SOURCE CODE:
-  https://github.com/axetroy/virtual-node-env
-
-```
+then run `npm dev`, it will automatically download the specified node version and run the commands.
 
 ### Install
 
@@ -110,16 +103,6 @@ $ virtual-node-env --help
 ```bash
 $ virtual-node-env clean
 # then remove the binary file
-```
-
-### Configuration
-
-Your can specify the configuration file by `--config` option, or put a `.virtual-node-env.json` file in the root of your project.
-
-```json
-{
-  "node": "v16.20.0"
-}
 ```
 
 then you can run `virtual-node-env` without specify the version
