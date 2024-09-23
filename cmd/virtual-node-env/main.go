@@ -145,7 +145,7 @@ func parse() (*Flag, error) {
 
 	// Detect the configuration file if not specified
 	if f.Config == nil {
-		configFilePath, err := findConfigFile("virtual-node-env.json")
+		configFilePath, err := findConfigFile(".virtual-node-env.json")
 
 		if err != nil {
 			return nil, errors.WithStack(err)
