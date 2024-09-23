@@ -6,7 +6,9 @@ import (
 	"path/filepath"
 	"strings"
 
-	VirtualNodeEnvironment "github.com/axetroy/virtual_node_env"
+	"github.com/axetroy/virtual_node_env/internal/cli"
+	"github.com/axetroy/virtual_node_env/internal/node"
+	"github.com/axetroy/virtual_node_env/internal/util"
 	"github.com/pkg/errors"
 )
 
@@ -43,6 +45,10 @@ ENVIRONMENT VARIABLES:
   NODE_ENV_DIR             The directory where the nodejs is stored, defaults to: $HOME/.virtual-node-env
   DEBUG                    Print debug information when set DEBUG=1
 
+Configuration:
+	The configuration file is a JSON file that contains the node version.
+	By default, if there is no configuration in the current directory, it will automatically search for the configuration file upwards.
+
 SOURCE CODE:
   https://github.com/axetroy/virtual-node-env`)
 }
@@ -52,41 +58,6 @@ type Flag struct {
 	Version bool
 	Config  *string
 	Cmd     []string
-}
-
-// 检查文件是否存在
-func fileExists(filePath string) bool {
-	_, err := os.Stat(filePath)
-	return err == nil
-}
-
-// 递归向上查找配置文件
-func findConfigFile(fileName string) (string, error) {
-	pwd, err := os.Getwd()
-
-	if err != nil {
-		return "", errors.WithStack(err)
-	}
-
-	defaultConfigFile := filepath.Join(pwd, ".virtual-node-env.json")
-
-	for {
-		VirtualNodeEnvironment.Debug("Find config file in '%s'\n", pwd)
-
-		configFilePath := filepath.Join(pwd, fileName)
-		if fileExists(configFilePath) {
-			return configFilePath, nil
-		}
-
-		// 获取上一级目录
-		parentDir := filepath.Dir(pwd)
-		if parentDir == pwd {
-			break // 已经到达根目录
-		}
-		pwd = parentDir
-	}
-
-	return defaultConfigFile, nil
 }
 
 func parse() (*Flag, error) {
@@ -145,21 +116,31 @@ func parse() (*Flag, error) {
 
 	// Detect the configuration file if not specified
 	if f.Config == nil {
-		configFilePath, err := findConfigFile(".virtual-node-env.json")
+		cwd, err := os.Getwd()
 
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
 
-		VirtualNodeEnvironment.Debug("Use configuration file: %s\n", configFilePath)
+		configFilePath := util.LoopUpFile(cwd, ".virtual-node-env.json")
 
-		f.Config = &configFilePath
+		if configFilePath != nil {
+			util.Debug("Use configuration file: %s\n", *configFilePath)
+		}
+
+		f.Config = configFilePath
 	}
 
 	return &f, nil
 }
 
 func run() error {
+	cwd, err := os.Getwd()
+
+	if err != nil {
+		return errors.WithStack(err)
+	}
+
 	f, err := parse()
 	if err != nil {
 		return errors.WithStack(err)
@@ -192,9 +173,9 @@ func run() error {
 		commands := f.Cmd[2:]
 
 		if len(commands) == 0 {
-			return VirtualNodeEnvironment.Use(nodeVersion)
+			return cli.Use(nodeVersion)
 		} else {
-			return VirtualNodeEnvironment.Run(&VirtualNodeEnvironment.Options{
+			return cli.Run(&cli.RunOptions{
 				Version: nodeVersion,
 				Cmd:     commands,
 			})
@@ -206,38 +187,73 @@ func run() error {
 
 		nodeVersion := strings.TrimPrefix(f.Cmd[1], "v")
 
-		return VirtualNodeEnvironment.Remove(nodeVersion)
+		return cli.Remove(nodeVersion)
 
 	case "ls", "list":
-		return VirtualNodeEnvironment.List()
+		return cli.List()
 	case "ls-remote", "list-remote":
-		return VirtualNodeEnvironment.ListRemote()
+		return cli.ListRemote()
 	case "clean":
-		return VirtualNodeEnvironment.Clean()
+		return cli.Clean()
 	default:
-		if f.Config != nil {
-			config, err := VirtualNodeEnvironment.LoadConfig(*f.Config)
-			if err != nil {
-				return errors.WithStack(err)
-			}
-
-			nodeVersion := strings.TrimPrefix(config.Node, "v")
-
-			if nodeVersion == "" {
-				return errors.New("missing node field in the configuration file")
-			}
-
-			commands := f.Cmd
-
-			// run command
-			if len(commands) > 0 {
-				return VirtualNodeEnvironment.Run(&VirtualNodeEnvironment.Options{
-					Version: nodeVersion,
-					Cmd:     commands,
-				})
-			}
+		if len(f.Cmd) == 0 {
+			return errors.New("missing command")
 		}
-		return errors.Errorf("unknown command: %s", cmd)
+
+		var configPath *string
+
+		if f.Config == nil {
+			configPathInCwd := filepath.Join(cwd, ".virtual-node-env.json")
+
+			if util.IsFileExist(configPathInCwd) {
+				configPath = &configPathInCwd
+			}
+		} else {
+			configPath = f.Config
+		}
+
+		// If the configuration file is found, then use the configuration file to run the command
+		if configPath != nil {
+			util.Debug("Use configuration file: %s\n", *configPath)
+
+			return cli.RunWithConfig(*configPath, f.Cmd)
+		}
+
+		// If the package.json file is found, then use the node version in the package.json to run the command
+		if util.IsFileExist(filepath.Join(cwd, "package.json")) {
+			util.Debug("Use node version from %s\n", filepath.Join(cwd, "package.json"))
+
+			semverVersionConstraint, err := node.GetVersionFromPackageJSON(filepath.Join(cwd, "package.json"))
+
+			if err != nil {
+				return errors.WithMessage(err, "failed to get node version from package.json")
+			}
+
+			matchVersion, err := node.GetMatchVersion(*semverVersionConstraint)
+
+			if err != nil {
+				return errors.WithMessage(err, "failed to get match version")
+			}
+
+			if matchVersion == nil {
+				return errors.New("no match version found")
+			}
+
+			return cli.Run(&cli.RunOptions{
+				Version: *matchVersion,
+				Cmd:     f.Cmd,
+			})
+		}
+
+		// Loop up the configuration file in the parent directory
+		parentConfig := util.LoopUpFile(cwd, ".virtual-node-env.json")
+
+		if parentConfig != nil {
+			util.Debug("Use configuration file: %s\n", *parentConfig)
+			return cli.RunWithConfig(*parentConfig, f.Cmd)
+		} else {
+			return errors.WithStack(errors.New("missing configuration file"))
+		}
 	}
 }
 
