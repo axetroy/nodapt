@@ -1,3 +1,6 @@
+# github.com/Masterminds/semver v1.5.0
+## explicit
+github.com/Masterminds/semver
 # github.com/PuerkitoBio/goquery v1.9.1
 ## explicit; go 1.18
 github.com/PuerkitoBio/goquery

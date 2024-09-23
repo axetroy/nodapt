@@ -3,6 +3,7 @@ module github.com/axetroy/virtual_node_env
 go 1.23
 
 require (
+	github.com/Masterminds/semver v1.5.0
 	github.com/PuerkitoBio/goquery v1.9.1
 	github.com/cheggaaa/pb/v3 v3.1.5
 	github.com/hashicorp/go-version v1.6.0
