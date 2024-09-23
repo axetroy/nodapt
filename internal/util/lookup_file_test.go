@@ -10,10 +10,10 @@ func TestLoopUpFile(t *testing.T) {
 	// Setup temporary directories and files for testing
 	rootDir := t.TempDir()
 
-	defer os.RemoveAll(rootDir)
-
 	subDir := filepath.Join(rootDir, "subdir")
 	_ = os.Mkdir(subDir, 0755)
+
+	defer os.RemoveAll(subDir)
 
 	configFileName := "config.yaml"
 	configFilePath := filepath.Join(rootDir, configFileName)
