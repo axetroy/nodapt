@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"os"
-	"path/filepath"
 	"strings"
 
 	"github.com/axetroy/virtual_node_env/internal/cli"
@@ -166,12 +165,12 @@ func run() error {
 
 		// If the package.json file is found, then use the node version in the package.json to run the command
 		if packageJSONPath != nil {
-			util.Debug("Use node version from %s\n", filepath.Join(cwd, "package.json"))
+			util.Debug("Use node version from %s\n", *packageJSONPath)
 
-			semverVersionConstraint, err := node.GetVersionFromPackageJSON(filepath.Join(cwd, "package.json"))
+			semverVersionConstraint, err := node.GetVersionFromPackageJSON(*packageJSONPath)
 
 			if err != nil {
-				return errors.WithMessage(err, "failed to get node version from package.json")
+				return errors.WithMessagef(err, "failed to get node constraint version from %s", *packageJSONPath)
 			}
 
 			matchVersion, err := node.GetMatchVersion(*semverVersionConstraint)
