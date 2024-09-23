@@ -69,34 +69,3 @@ func Run(options *RunOptions) error {
 
 	return nil
 }
-
-// RunWithConfig executes a command with the specified configuration.
-//
-// It loads the configuration from the provided configPath. If the configuration
-// file cannot be loaded or if the required 'Node' field is missing, it returns
-// an error. If successful, it runs the command with the options derived from
-// the configuration.
-//
-// Parameters:
-//   - configPath: The path to the configuration file.
-//   - cmd: A slice of strings representing the command to be executed.
-//
-// Returns:
-//   - An error if the configuration loading fails or if the 'Node' field is missing;
-//     otherwise, it returns nil.
-func RunWithConfig(configPath string, cmd []string) error {
-	config, err := LoadConfig(configPath)
-
-	if err != nil {
-		return errors.WithMessage(err, "load configuration file failed")
-	}
-
-	if config.Node == "" {
-		return errors.New("missing node field in the configuration file")
-	}
-
-	return Run(&RunOptions{
-		Version: config.Node,
-		Cmd:     cmd,
-	})
-}

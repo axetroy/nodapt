@@ -22,6 +22,7 @@ func printHelp() {
 	println(`virtual-node-env - Virtual node environment, similar to nvm
 
 USAGE:
+virtual-node-env [OPTIONS] [COMMAND]
 virtual-node-env [OPTIONS] use <VERSION> [COMMAND]
 virtual-node-env [OPTIONS] clean
 virtual-node-env [OPTIONS] ls|list
@@ -37,17 +38,12 @@ COMMANDS:
 OPTIONS:
   --help                   Print help information
   --version                Print version information
-  --config                 Specify the configuration file. Detected .virtual-node-env.json automatically if not specified.
 
 ENVIRONMENT VARIABLES:
   NODE_MIRROR              The mirror of the nodejs download, defaults to: https://nodejs.org/dist/
                            Chinese users defaults to: https://registry.npmmirror.com/-/binary/node/
   NODE_ENV_DIR             The directory where the nodejs is stored, defaults to: $HOME/.virtual-node-env
   DEBUG                    Print debug information when set DEBUG=1
-
-Configuration:
-	The configuration file is a JSON file that contains the node version.
-	By default, if there is no configuration in the current directory, it will automatically search for the configuration file upwards.
 
 SOURCE CODE:
   https://github.com/axetroy/virtual-node-env`)
@@ -56,7 +52,6 @@ SOURCE CODE:
 type Flag struct {
 	Help    bool
 	Version bool
-	Config  *string
 	Cmd     []string
 }
 
@@ -83,22 +78,6 @@ func parse() (*Flag, error) {
 				f.Help = true
 			case arg == "--version", arg == "-v":
 				f.Version = true
-			case strings.HasPrefix(arg, "--config"):
-				eqIndex := strings.Index(arg, "=")
-
-				if eqIndex != -1 {
-					val := arg[eqIndex+1:]
-
-					f.Config = &val
-				} else {
-					if length+1 >= len(args) {
-						panic("missing value for --config flag")
-					}
-
-					val := args[length+1] // take value from next arg
-					f.Config = &val
-					length++
-				}
 			case arg == "--":
 				if commandIndex == -1 {
 					commandIndex = length
@@ -112,23 +91,6 @@ func parse() (*Flag, error) {
 		}
 
 		length++
-	}
-
-	// Detect the configuration file if not specified
-	if f.Config == nil {
-		cwd, err := os.Getwd()
-
-		if err != nil {
-			return nil, errors.WithStack(err)
-		}
-
-		configFilePath := util.LoopUpFile(cwd, ".virtual-node-env.json")
-
-		if configFilePath != nil {
-			util.Debug("Use configuration file: %s\n", *configFilePath)
-		}
-
-		f.Config = configFilePath
 	}
 
 	return &f, nil
@@ -200,27 +162,10 @@ func run() error {
 			return errors.New("missing command")
 		}
 
-		var configPath *string
-
-		if f.Config == nil {
-			configPathInCwd := filepath.Join(cwd, ".virtual-node-env.json")
-
-			if util.IsFileExist(configPathInCwd) {
-				configPath = &configPathInCwd
-			}
-		} else {
-			configPath = f.Config
-		}
-
-		// If the configuration file is found, then use the configuration file to run the command
-		if configPath != nil {
-			util.Debug("Use configuration file: %s\n", *configPath)
-
-			return cli.RunWithConfig(*configPath, f.Cmd)
-		}
+		packageJSONPath := util.LoopUpFile(cwd, "package.json")
 
 		// If the package.json file is found, then use the node version in the package.json to run the command
-		if util.IsFileExist(filepath.Join(cwd, "package.json")) {
+		if packageJSONPath != nil {
 			util.Debug("Use node version from %s\n", filepath.Join(cwd, "package.json"))
 
 			semverVersionConstraint, err := node.GetVersionFromPackageJSON(filepath.Join(cwd, "package.json"))
@@ -245,15 +190,7 @@ func run() error {
 			})
 		}
 
-		// Loop up the configuration file in the parent directory
-		parentConfig := util.LoopUpFile(cwd, ".virtual-node-env.json")
-
-		if parentConfig != nil {
-			util.Debug("Use configuration file: %s\n", *parentConfig)
-			return cli.RunWithConfig(*parentConfig, f.Cmd)
-		} else {
-			return errors.WithStack(errors.New("missing configuration file"))
-		}
+		return errors.New("can not found package.json")
 	}
 }
 
