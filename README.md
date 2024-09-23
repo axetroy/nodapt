@@ -51,16 +51,6 @@ Add NodeJS version constraint in `package.json`.
  }
 ```
 
-> [!NOTE]
->
-> In actual project development, you may encounter situations where several
-> projects depend on different node versions. For example 12.x.y / 16.x.y / 20.x.y.
->
-> They are not fully compatible, so you need node version management tools, such as nvm.
-> And it requires manual version switching, not automatic.
-> In my project, there are some automatic CIs, so the node version needs to
-> automatically follow the project.
-
 and then append the `virtual-node-env` command to npm script.
 
 ```diff
