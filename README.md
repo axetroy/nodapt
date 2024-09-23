@@ -4,23 +4,13 @@
 [![996.icu](https://img.shields.io/badge/link-996.icu-red.svg)](https://996.icu)
 ![Repo Size](https://img.shields.io/github/repo-size/axetroy/virtual-node-env.svg)
 
-## virtual-node-env
+### Intention
 
-A tool similar to virtualenv, used to set a specific node version for a specified project, which is used to meet the needs of different node versions of different projects.
+This project is used to switch node versions, but it does not want global node version management tools such as [nvm](https://github.com/nvm-sh/nvm).
 
-It is similar to nvm, but not a replacement for nvm. nvm manages the global node version for you, and can even switch node versions temporarily.
+It is not a global switch, but follows the project. For example, project A requires `16.x.y`, while project B uses `20.x.y`.
 
-virtual-node-env can also switch node versions, but not globally, but following the project.
-
-> [!NOTE]
->
-> In actual project development, you may encounter situations where several
-> projects depend on different node versions. For example 12.x.y / 16.x.y / 20.x.y.
->
-> They are not fully compatible, so you need node version management tools, such as nvm.
-> And it requires manual version switching, not automatic.
-> In my project, there are some automatic CIs, so the node version needs to
-> automatically follow the project.
+This tool allows you not to pay attention to which version of node you should use in the project.
 
 ### Features
 

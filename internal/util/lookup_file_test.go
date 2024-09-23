@@ -10,15 +10,18 @@ func TestLoopUpFile(t *testing.T) {
 	// Setup temporary directories and files for testing
 	rootDir := t.TempDir()
 
-	subDir := filepath.Join(rootDir, "subdir")
-	_ = os.Mkdir(subDir, 0755)
+	subDirectory := filepath.Join(rootDir, "subdir")
+	_ = os.Mkdir(subDirectory, 0755)
 
 	configFileName := "config.yaml"
 	configFilePath := filepath.Join(rootDir, configFileName)
-	_, err := os.Create(configFilePath)
+	file, err := os.Create(configFilePath)
+
 	if err != nil {
 		t.Fatalf("Failed to create config file: %v", err)
 	}
+
+	defer file.Close()
 
 	tests := []struct {
 		name     string
@@ -34,13 +37,13 @@ func TestLoopUpFile(t *testing.T) {
 		},
 		{
 			name:     "File exists in parent directory",
-			root:     subDir,
+			root:     subDirectory,
 			fileName: configFileName,
 			expected: &configFilePath,
 		},
 		{
 			name:     "File does not exist",
-			root:     subDir,
+			root:     subDirectory,
 			fileName: "nonexistent.yaml",
 			expected: nil,
 		},
