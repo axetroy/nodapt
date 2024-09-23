@@ -13,7 +13,7 @@ lint:
 .ONESHELL:
 format:
 	@gofmt -l -e cmd/**/*.go
-	@gofmt -l -e *.go
+	@gofmt -l -e internal/**/*.go
 	@go fmt -mod=vendor ./...
 
 update-go-deps:
