@@ -246,7 +246,7 @@ func LoadConfig(filePath string) (*Config, error) {
 	content, err := os.ReadFile(filePath)
 
 	if err != nil {
-		if err == os.ErrNotExist {
+		if os.IsNotExist(err) {
 			return nil, errors.WithMessage(err, "Can not found `.virtual-node-env.json` file.")
 		}
 
