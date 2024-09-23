@@ -82,14 +82,7 @@ $ virtual-node-env --help
 
 ```bash
 $ virtual-node-env clean
-# then remove the binary file
-```
-
-then you can run `virtual-node-env` without specify the version
-
-```bash
-$ virtual-node-env node -v
-v16.20.0
+# then remove the binary file or uninstall vir package manager
 ```
 
 ### Similar Projects
