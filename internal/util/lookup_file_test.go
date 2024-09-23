@@ -13,8 +13,6 @@ func TestLoopUpFile(t *testing.T) {
 	subDir := filepath.Join(rootDir, "subdir")
 	_ = os.Mkdir(subDir, 0755)
 
-	defer os.RemoveAll(subDir)
-
 	configFileName := "config.yaml"
 	configFilePath := filepath.Join(rootDir, configFileName)
 	_, err := os.Create(configFilePath)
