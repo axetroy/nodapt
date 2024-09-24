@@ -33,6 +33,8 @@ jobs:
         run: make format
 
       - name: Test
+        env:
+          DEBUG: 1
         run: make test
 
   release:
