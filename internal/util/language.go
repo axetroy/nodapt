@@ -106,10 +106,13 @@ func IsSimplifiedChinese() bool {
 	lang := getLanguage()
 
 	if lang == nil {
+		Debug("lang: nil\n")
 		return false
 	}
 
-	simplifiedChineseSet := []string{"zh_CN", "zh-Hans-CN"}
+	Debug("lang: %s\n", *lang)
+
+	simplifiedChineseSet := []string{"zh_CN", "zh-CN", "zh-Hans-CN"}
 
 	for _, v := range simplifiedChineseSet {
 		if strings.Contains(strings.ToLower(*lang), strings.ToLower(v)) {
