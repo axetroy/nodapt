@@ -54,7 +54,7 @@ jobs:
           node-version: 18
           registry-url: "https://registry.npmjs.org"
 
-      - uses: axetroy/setup-whatchanged@v1
+      - uses: release-lab/setup-whatchanged@v1
         with:
           version: v0.5.6
 
@@ -81,3 +81,13 @@ jobs:
         run: node npm/publish.js
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Sync CNPM
+        run: |
+          curl -X PUT https://registry-direct.npmmirror.com/-/package/@axetroy/virtual-node-env/syncs
+          curl -X PUT https://registry-direct.npmmirror.com/-/package/@axetroy/virtual-node-env-darwin-amd64/syncs
+          curl -X PUT https://registry-direct.npmmirror.com/-/package/@axetroy/virtual-node-env-darwin-arm64/syncs
+          curl -X PUT https://registry-direct.npmmirror.com/-/package/@axetroy/virtual-node-env-linux-amd64/syncs
+          curl -X PUT https://registry-direct.npmmirror.com/-/package/@axetroy/virtual-node-env-linux-arm64/syncs
+          curl -X PUT https://registry-direct.npmmirror.com/-/package/@axetroy/virtual-node-env-windows-amd64/syncs
+          curl -X PUT https://registry-direct.npmmirror.com/-/package/@axetroy/virtual-node-env-windows-arm64/syncs
