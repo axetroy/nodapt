@@ -12,7 +12,7 @@ import (
 
 type Versions []struct {
 	Version string `json:"version"`
-	LTS     bool   `json:"lts"`
+	LTS     any    `json:"lts"`
 }
 
 // GetAllVersions retrieves a list of all available Node.js versions from the official Node.js distribution index.
@@ -104,8 +104,16 @@ func GetLatestLTSVersion() (string, error) {
 	}
 
 	for _, version := range versions {
-		if version.LTS {
+		// Check if the LTS field is a string and not empty
+		if str, ok := version.LTS.(string); ok && str != "" {
 			latestLTSVersion = version.Version
+			break
+		}
+
+		// Check if the LTS field is a boolean and set to true
+		if lsLTS, ok := version.LTS.(bool); ok && lsLTS {
+			latestLTSVersion = version.Version
+			break
 		}
 	}
 
