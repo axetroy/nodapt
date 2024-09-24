@@ -15,7 +15,7 @@ func ListRemote() error {
 	}
 
 	for _, version := range versions {
-		fmt.Println(version)
+		fmt.Println(version.Version)
 	}
 
 	return nil
