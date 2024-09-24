@@ -124,47 +124,27 @@ func getLanguageViaApi() *string {
 	return nil
 }
 
-// GetLanguage retrieves the current language setting of the operating system.
-// It checks the environment variable "LANG" first and returns its value if available.
-//
-// On Windows, it executes a PowerShell command to get the installed UI culture name.
-// On macOS, it reads the default Apple languages using the `defaults` command and
-// returns the first language in the list.
-// On Linux, it reads the "/etc/locale.conf" file to find the language setting.
-//
-// Returns a pointer to a string containing the language code (e.g., "en-us") or nil
-// if the language cannot be determined or an error occurs during execution.
-func getLanguage() *string {
-	if lang := getLanguageViaApi(); lang != nil {
-		Debug("getLanguageViaApi: %s\n", *lang)
-		return lang
+func isSimplifiedChineseLang(lang *string) bool {
+	simplifiedChineseSet := []string{"zh_CN", "zh-CN", "zh-Hans-CN"}
+
+	for _, v := range simplifiedChineseSet {
+		if strings.Contains(strings.ToLower(*lang), strings.ToLower(v)) {
+			return true
+		}
 	}
 
-	if lang := getLanguageViaEnv(); lang != nil {
-		Debug("getLanguageViaEnv: %s\n", *lang)
-		return lang
-	}
-
-	return nil
+	return false
 }
 
 // IsSimplifiedChinese checks if the current language is Simplified Chinese.
 // It returns true if the language is either "zh_CN" or "zh-Hans-CN",
 // and false if the language is nil or does not match the specified values.
 func IsSimplifiedChinese() bool {
-	lang := getLanguage()
+	userLanguages := []*string{getLanguageViaApi(), getLanguageViaEnv()}
 
-	if lang == nil {
-		Debug("lang: nil\n")
-		return false
-	}
-
-	Debug("lang: %s\n", *lang)
-
-	simplifiedChineseSet := []string{"zh_CN", "zh-CN", "zh-Hans-CN"}
-
-	for _, v := range simplifiedChineseSet {
-		if strings.Contains(strings.ToLower(*lang), strings.ToLower(v)) {
+	for _, lang := range userLanguages {
+		Debug("lang: %v\n", lang)
+		if lang != nil && isSimplifiedChineseLang(lang) {
 			return true
 		}
 	}
