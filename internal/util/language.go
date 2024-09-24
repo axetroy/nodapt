@@ -136,10 +136,12 @@ func getLanguageViaApi() *string {
 // if the language cannot be determined or an error occurs during execution.
 func getLanguage() *string {
 	if lang := getLanguageViaApi(); lang != nil {
+		Debug("getLanguageViaApi: %s\n", *lang)
 		return lang
 	}
 
 	if lang := getLanguageViaEnv(); lang != nil {
+		Debug("getLanguageViaEnv: %s\n", *lang)
 		return lang
 	}
 
