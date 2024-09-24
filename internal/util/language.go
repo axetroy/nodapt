@@ -19,8 +19,8 @@ import (
 //
 // Returns a pointer to a string containing the language code (e.g., "en-us") or nil
 // if the language cannot be determined or an error occurs during execution.
-func GetLanguage() *string {
-	lang := strings.ToLower(GetEnvsWithFallback(os.Getenv("LANG"), "LANG", "CL_ALL"))
+func getLanguage() *string {
+	lang := GetEnvsWithFallback(os.Getenv("LANG"), "LANG", "CL_ALL")
 
 	if lang != "" {
 		return &lang
@@ -35,7 +35,7 @@ func GetLanguage() *string {
 			return nil
 		}
 
-		lang := strings.ToLower(strings.TrimSpace(string(output)))
+		lang := strings.TrimSpace(string(output))
 
 		return &lang
 	}
@@ -66,7 +66,7 @@ func GetLanguage() *string {
 			return nil
 		}
 
-		lang := strings.ToLower(strings.TrimSpace(languages[0]))
+		lang := strings.TrimSpace(languages[0])
 
 		return &lang
 	}
@@ -103,7 +103,7 @@ func GetLanguage() *string {
 // It returns true if the language is either "zh_CN" or "zh-Hans-CN",
 // and false if the language is nil or does not match the specified values.
 func IsSimplifiedChinese() bool {
-	lang := GetLanguage()
+	lang := getLanguage()
 
 	if lang == nil {
 		return false
