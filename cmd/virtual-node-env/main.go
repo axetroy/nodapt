@@ -18,7 +18,7 @@ var (
 )
 
 func printHelp() {
-	println(`virtual-node-env - Virtual node environment, similar to nvm
+	fmt.Println(`virtual-node-env - Virtual node environment, similar to nvm
 
 USAGE:
 virtual-node-env [OPTIONS] [COMMAND]
@@ -113,7 +113,7 @@ func run() error {
 	}
 
 	if f.Version {
-		println(fmt.Sprintf("%s %s %s", version, commit, date))
+		fmt.Printf("%s %s %s\n", version, commit, date)
 		os.Exit(0)
 	}
 

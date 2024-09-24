@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -25,7 +26,7 @@ func List() error {
 			n := strings.SplitN(fName, "-", -1)
 
 			version := n[1]
-			println(version)
+			fmt.Println(version)
 		}
 	}
 
