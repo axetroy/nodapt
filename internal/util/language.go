@@ -38,7 +38,7 @@ func getLanguageViaEnv() *string {
 func getLanguageViaApi() *string {
 	switch runtime.GOOS {
 	case "windows":
-		cmd := exec.Command("defaults", "read", "-g", "AppleLanguages")
+		cmd := exec.Command("powershell", "-Command", "[CultureInfo]::InstalledUICulture.Name")
 
 		output, err := cmd.Output()
 
@@ -46,26 +46,10 @@ func getLanguageViaApi() *string {
 			return nil
 		}
 
-		// (
-		// 		"en-US",
-		// 		"zh-Hans"
-		// )
-		jsonString := strings.ReplaceAll(strings.ReplaceAll(string(output), "(", "["), ")", "]")
-
-		var languages []string
-
-		// Decode JSON
-		if err := json.Unmarshal([]byte(jsonString), &languages); err != nil {
-			return nil
-		}
-
-		if len(languages) == 0 {
-			return nil
-		}
-
-		lang := strings.TrimSpace(languages[0])
+		lang := string(output)
 
 		return &lang
+
 	case "darwin":
 		cmd := exec.Command("defaults", "read", "-g", "AppleLanguages")
 
@@ -143,8 +127,14 @@ func IsSimplifiedChinese() bool {
 	userLanguages := []*string{getLanguageViaApi(), getLanguageViaEnv()}
 
 	for _, lang := range userLanguages {
-		Debug("lang: %v\n", lang)
-		if lang != nil && isSimplifiedChineseLang(lang) {
+		if lang == nil {
+			Debug("lang: nil\n")
+			continue
+		}
+
+		Debug("lang: %v\n", *lang)
+
+		if isSimplifiedChineseLang(lang) {
 			return true
 		}
 	}
