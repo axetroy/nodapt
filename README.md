@@ -76,23 +76,18 @@ $ virtual-node-env clean
 # then remove the binary file or uninstall vir package manager
 ```
 
-### Nodejs version selection strategy
+### NodeJS version selection algorithm
 
-> This section describes how the plugin selects the appropriate node version.
+This section explains what happens when you run `virtual-node-env` and how it selects the node version.
 
-1. If the `package.json` file specifies the node version constraint, the plugin will use the specified version constraint.
-
-   1.1 Get the version list from remote
-
-   1.2 Use the latest version that matches the version constraint
-
-2. If the `package.json` file does not specify the node version constraint
-
-   2.1 If node has been installed in your computed, the plugin will use the installed version.
-
-   2.2 Otherwise, the plugin will use the latest LTS version.
-
-3. Otherwise, the plugin will use the latest LTS version.
+1. Check for the presence of `package.json`.
+2. If `package.json` exists:
+   1. If the `engines.node` field is specified, use the indicated version.
+   2. If Node.js is installed on the current machine, use the installed version.
+   3. If Node.js is not installed, run the command directly.
+3. If `package.json` does not exist:
+   1. If Node.js is installed on the current machine, use the installed version.
+   2. If Node.js is not installed, run the command directly.
 
 ### Similar Projects
 
