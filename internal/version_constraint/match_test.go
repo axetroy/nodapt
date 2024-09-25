@@ -1,4 +1,4 @@
-package version_match
+package version_constraint
 
 import (
 	"testing"
@@ -8,10 +8,10 @@ import (
 
 func TestVersionMatch(t *testing.T) {
 	tests := []struct {
-		versionRange string
-		version      string
-		expected     bool
-		expectError  bool
+		constraint  string
+		version     string
+		expected    bool
+		expectError bool
 	}{
 		{"^1.0.0", "1.0.0", true, false},
 		{"^1.0.0", "1.1.0", true, false},
@@ -33,7 +33,7 @@ func TestVersionMatch(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		result, err := VersionMatch(test.versionRange, test.version)
+		result, err := Match(test.constraint, test.version)
 		if test.expectError {
 			assert.Error(t, err)
 		} else {

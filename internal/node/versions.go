@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"os/exec"
 
-	"github.com/axetroy/virtual_node_env/internal/version_match"
+	"github.com/axetroy/virtual_node_env/internal/version_constraint"
 	"github.com/pkg/errors"
 )
 
@@ -42,12 +42,12 @@ func GetAllVersions() (Versions, error) {
 // It retrieves all available node versions and checks each one against the given constraint.
 //
 // Parameters:
-//   - semverVersionConstraint: A string representing the semantic version constraint to match against.
+//   - constraint: A string representing the semantic version constraint to match against.
 //
 // Returns:
 //   - A pointer to a string containing the matching version if found, or nil if no match is found.
 //   - An error if there was a failure in retrieving the node versions.
-func GetMatchVersion(semverVersionConstraint string) (*string, error) {
+func GetMatchVersion(constraint string) (*string, error) {
 	versions, err := GetAllVersions()
 
 	if err != nil {
@@ -55,7 +55,7 @@ func GetMatchVersion(semverVersionConstraint string) (*string, error) {
 	}
 
 	for _, version := range versions {
-		isMatch, _ := version_match.VersionMatch(semverVersionConstraint, version.Version)
+		isMatch, _ := version_constraint.Match(constraint, version.Version)
 
 		if isMatch {
 			return &version.Version, nil
