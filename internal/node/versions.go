@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"os/exec"
 
-	"github.com/axetroy/virtual_node_env/internal/mirrors"
 	"github.com/axetroy/virtual_node_env/internal/version_match"
 	"github.com/pkg/errors"
 )
@@ -22,7 +21,7 @@ type Versions []struct {
 // - A slice of strings containing the Node.js versions, or
 // - An error if the request fails or if there is an issue decoding the response.
 func GetAllVersions() (Versions, error) {
-	resp, err := http.Get(mirrors.NODE_MIRROR + "index.json")
+	resp, err := http.Get(NODE_MIRROR + "index.json")
 
 	if err != nil {
 		return nil, errors.WithMessage(err, "failed to get node versions")

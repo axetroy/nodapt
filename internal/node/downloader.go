@@ -11,7 +11,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/axetroy/virtual_node_env/internal/mirrors"
 	"github.com/axetroy/virtual_node_env/internal/util"
 	pb "github.com/cheggaaa/pb/v3"
 	"github.com/pkg/errors"
@@ -225,7 +224,7 @@ func Download(version string, dir string) (string, error) {
 		return destFolder, nil
 	}
 
-	url := fmt.Sprintf("%sv%s/%s", mirrors.NODE_MIRROR, version, fileNameWithExt)
+	url := fmt.Sprintf("%sv%s/%s", NODE_MIRROR, version, fileNameWithExt)
 
 	util.Debug("downloadURL: %s\n", url)
 
