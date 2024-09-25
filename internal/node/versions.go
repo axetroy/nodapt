@@ -86,36 +86,3 @@ func GetCurrentVersion() (*string, error) {
 
 	return &version, nil
 }
-
-// GetLatestLTSVersion retrieves the latest Long Term Support (LTS) version
-// from the available versions of the software. It returns the version as a
-// string and an error if any issues occur while fetching the versions.
-//
-// Returns:
-//   - A string representing the latest LTS version, or an empty string if none is found.
-//   - An error if there was a problem retrieving the versions.
-func GetLatestLTSVersion() (string, error) {
-	var latestLTSVersion = ""
-
-	versions, err := GetAllVersions()
-
-	if err != nil {
-		return "", errors.WithStack(err)
-	}
-
-	for _, version := range versions {
-		// Check if the LTS field is a string and not empty
-		if str, ok := version.LTS.(string); ok && str != "" {
-			latestLTSVersion = version.Version
-			break
-		}
-
-		// Check if the LTS field is a boolean and set to true
-		if lsLTS, ok := version.LTS.(bool); ok && lsLTS {
-			latestLTSVersion = version.Version
-			break
-		}
-	}
-
-	return latestLTSVersion, nil
-}

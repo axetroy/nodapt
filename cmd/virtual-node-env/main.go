@@ -173,47 +173,14 @@ func run() error {
 				return errors.WithMessagef(err, "failed to get node constraint version from %s", *packageJSONPath)
 			}
 
-			if semverVersionConstraint == nil {
-				// If the node version is not found in the package.json, then use the current node version
-				currentVersion, err := node.GetCurrentVersion()
-
-				if err != nil {
-					return errors.WithMessage(err, "failed to get current node version")
-				}
-
-				if currentVersion != nil {
-					semverVersionConstraint = currentVersion
-				} else {
-					// If the current node version is not found, then use the latest LTS version
-					latestLTSVersion, err := node.GetLatestLTSVersion()
-
-					if err == nil {
-						semverVersionConstraint = &latestLTSVersion
-					}
-				}
+			if semverVersionConstraint != nil {
+				return cli.RunWithVersionConstraint(*semverVersionConstraint, f.Cmd)
+			} else {
+				return cli.RunWithInstalledVersion(f.Cmd)
 			}
-
-			if semverVersionConstraint == nil {
-				return errors.New("can not found node version in package.json")
-			}
-
-			matchVersion, err := node.GetMatchVersion(*semverVersionConstraint)
-
-			if err != nil {
-				return errors.WithMessage(err, "failed to get match version")
-			}
-
-			if matchVersion == nil {
-				return errors.New("no match version found")
-			}
-
-			return cli.Run(&cli.RunOptions{
-				Version: *matchVersion,
-				Cmd:     f.Cmd,
-			})
+		} else {
+			return cli.RunWithInstalledVersion(f.Cmd)
 		}
-
-		return errors.New("can not found package.json")
 	}
 }
 
