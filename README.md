@@ -85,6 +85,18 @@ $ virtual-node-env clean
 # then remove the binary file or uninstall vir package manager
 ```
 
+### Nodejs version selection strategy
+
+> This section describes how the plugin selects the appropriate node version.
+
+1. If the `package.json` file specifies the node version constraint, the plugin will use the specified version constraint.
+   1.1 Get the version list from remote
+   1.2 Use the latest version that matches the version constraint
+2. If the `package.json` file does not specify the node version constraint
+   2.1 If node has been installed in your computed, the plugin will use the installed version.
+   2.2 Otherwise, the plugin will use the latest LTS version.
+3. Otherwise, the plugin will use the latest LTS version.
+
 ### Similar Projects
 
 [https://github.com/jdx/mise](https://github.com/jdx/mise)
