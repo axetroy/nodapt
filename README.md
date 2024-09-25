@@ -83,11 +83,8 @@ This section explains what happens when you run `virtual-node-env` and how it se
 1. Check for the presence of `package.json`.
 2. If `package.json` exists:
    1. If the `engines.node` field is specified, use the indicated version.
-   2. If Node.js is installed on the current machine, use the installed version.
-   3. If Node.js is not installed, run the command directly.
-3. If `package.json` does not exist:
-   1. If Node.js is installed on the current machine, use the installed version.
-   2. If Node.js is not installed, run the command directly.
+   2. Otherwise, run the command directly.
+3. Otherwise, run the command directly.
 
 ### Similar Projects
 

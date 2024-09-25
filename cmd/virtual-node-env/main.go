@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"os/exec"
 	"strings"
 
 	"github.com/axetroy/virtual_node_env/internal/cli"
@@ -174,12 +175,15 @@ func run() error {
 			}
 
 			if semverVersionConstraint != nil {
+				util.Debug("Use node version constraint: %s\n", *semverVersionConstraint)
 				return cli.RunWithVersionConstraint(*semverVersionConstraint, f.Cmd)
 			} else {
-				return cli.RunWithInstalledVersion(f.Cmd)
+				util.Debug("Run command directly\n")
+				return cli.RunDirectly(f.Cmd)
 			}
 		} else {
-			return cli.RunWithInstalledVersion(f.Cmd)
+			util.Debug("Run command directly\n")
+			return cli.RunDirectly(f.Cmd)
 		}
 	}
 }
@@ -192,6 +196,15 @@ func main() {
 			fmt.Fprintf(os.Stderr, "%s\n", err.Error())
 			fmt.Fprintln(os.Stderr, "Print debug information when set DEBUG=1")
 		}
-		os.Exit(1)
+
+		unwrapError := errors.Unwrap(err)
+
+		if err, ok := err.(*exec.ExitError); ok {
+			os.Exit(err.ExitCode())
+		} else if err, ok := unwrapError.(*exec.ExitError); ok {
+			os.Exit(err.ExitCode())
+		} else {
+			os.Exit(1)
+		}
 	}
 }
