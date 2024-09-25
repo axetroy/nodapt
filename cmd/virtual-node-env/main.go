@@ -19,17 +19,19 @@ var (
 )
 
 func printHelp() {
-	fmt.Println(`virtual-node-env - Virtual node environment, similar to nvm
+	fmt.Println(`virtual-node-env - A virtual node environment for node.js, node version manager for projects.
 
 USAGE:
-virtual-node-env [OPTIONS] [COMMAND]
-virtual-node-env [OPTIONS] use <VERSION> [COMMAND]
+virtual-node-env [OPTIONS] <ARGS...>
+virtual-node-env [OPTIONS] use <VERSION> <ARGS...>
 virtual-node-env [OPTIONS] clean
 virtual-node-env [OPTIONS] ls|list
 virtual-node-env [OPTIONS] ls-remote|list-remote
 
 COMMANDS:
-  use <VERSION> [COMMAND]  Use the specified version of node to run the command
+  <ARGS...>                Automatically select node version to run commands
+  run <ARGS...>            Automatically select node version to run commands
+  use <VERSION> <ARGS...>  Use the specified version of node to run the command
   rm|remove <VERSION>      Remove the specified version of node that installed by virtual-node-env
   clean                    Clean the virtual node environment
   ls|list                  List all the installed node version
@@ -44,6 +46,11 @@ ENVIRONMENT VARIABLES:
                            Chinese users defaults to: https://registry.npmmirror.com/-/binary/node/
   NODE_ENV_DIR             The directory where the nodejs is stored, defaults to: $HOME/.virtual-node-env
   DEBUG                    Print debug information when set DEBUG=1
+
+EXAMPLES:
+  virtual-node-env node -v
+  virtual-node-env run node -v
+  virtual-node-env use v14.17.0 node -v
 
 SOURCE CODE:
   https://github.com/axetroy/virtual-node-env`)
@@ -157,6 +164,9 @@ func run() error {
 		return cli.ListRemote()
 	case "clean":
 		return cli.Clean()
+	case "run":
+		f.Cmd = f.Cmd[1:]
+		fallthrough
 	default:
 		if len(f.Cmd) == 0 {
 			return errors.New("missing command")
