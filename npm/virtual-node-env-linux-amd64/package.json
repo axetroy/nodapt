@@ -2,13 +2,22 @@
   "name": "@axetroy/virtual-node-env-linux-amd64",
   "version": "0.1.0",
   "description": "The Linux 64-Bit binary for virtual-node-env",
-  "repository": "https://github.com/axetroy/virtual-node-env",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/axetroy/virtual-node-env.git"
+  },
   "license": "Anti-996 License",
   "preferUnplugged": true,
   "engines": {
     "node": ">=12"
   },
-  "files": ["virtual-node-env"],
-  "os": ["linux"],
-  "cpu": ["x64"]
+  "files": [
+    "virtual-node-env"
+  ],
+  "os": [
+    "linux"
+  ],
+  "cpu": [
+    "x64"
+  ]
 }

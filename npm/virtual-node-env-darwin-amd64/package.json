@@ -2,14 +2,23 @@
   "name": "@axetroy/virtual-node-env-darwin-amd64",
   "version": "0.1.0",
   "description": "The MacOS 64-bit binary for virtual-node-env",
-  "repository": "https://github.com/axetroy/virtual-node-env",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/axetroy/virtual-node-env.git"
+  },
   "license": "Anti-996 License",
   "private": false,
   "preferUnplugged": true,
   "engines": {
     "node": ">=12"
   },
-  "files": ["virtual-node-env"],
-  "os": ["darwin"],
-  "cpu": ["x64"]
+  "files": [
+    "virtual-node-env"
+  ],
+  "os": [
+    "darwin"
+  ],
+  "cpu": [
+    "x64"
+  ]
 }

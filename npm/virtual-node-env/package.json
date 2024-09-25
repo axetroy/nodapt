@@ -6,6 +6,11 @@
   "author": "Axetroy <axetroy.dev@gmail.com>",
   "license": "Anti-996",
   "private": false,
+  "homepage": "https://github.com/axetroy/virtual-node-env",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/axetroy/virtual-node-env.git"
+  },
   "bin": {
     "virtual-node-env": "bin/virtual-node-env",
     "vnode": "bin/virtual-node-env"
@@ -17,7 +22,11 @@
     "README.md",
     "LICENSE"
   ],
-  "keywords": ["virtual", "node", "env"],
+  "keywords": [
+    "virtual",
+    "node",
+    "env"
+  ],
   "optionalDependencies": {
     "@axetroy/virtual-node-env-darwin-amd64": "0.1.0",
     "@axetroy/virtual-node-env-darwin-arm64": "0.1.0",
