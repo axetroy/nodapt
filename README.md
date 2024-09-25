@@ -33,34 +33,23 @@ v18.20.0
 
 ### Integrate into your NodeJS project
 
-Add NodeJS version constraint in `package.json`.
+1. Add NodeJS version constraint in `package.json`.
 
 ```diff
- "engines": {
++  "engines": {
 +    "node": "^20.x.x"
- }
++  },
+  "scripts": {
+    "dev": "vite dev"
+  }
 ```
 
-and then append the `virtual-node-env` command to npm script.
+2. Run the script with `virtual-node-env` command.
 
 ```diff
-{
-  "scripts": {
--    "install-deps": "npm install",
-+    "install-deps": "virtual-node-env npm install",
--    "dev": "vite dev"
-+    "dev": "virtual-node-env vite dev"
-  }
-}
+- yarn dev
++ virtual-node-env yarn dev
 ```
-
-install npm dependencies
-
-```bash
-npm run install-deps
-```
-
-then run `npm dev`, it will automatically download the specified node version and run the commands.
 
 ### Install
 
@@ -76,6 +65,8 @@ $ virtual-node-env --help
 ```sh
 $ npm install @axetroy/virtual-node-env -g
 $ virtual-node-env --help
+# or use the alias
+$ vnode --help
 ```
 
 ### Uninstall
