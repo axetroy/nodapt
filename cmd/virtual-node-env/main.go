@@ -154,9 +154,9 @@ func run() error {
 			return fmt.Errorf("constraint is required")
 		}
 
-		nodeVersion := strings.TrimPrefix(f.Cmd[1], "v")
+		constraint := f.Cmd[1]
 
-		return cli.Remove(nodeVersion)
+		return cli.Remove(constraint)
 
 	case "ls", "list":
 		return cli.List()

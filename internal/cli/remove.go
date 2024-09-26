@@ -3,27 +3,42 @@ package cli
 import (
 	"fmt"
 	"os"
-	"path/filepath"
 
+	"github.com/Masterminds/semver"
 	"github.com/axetroy/virtual_node_env/internal/node"
+	"github.com/pkg/errors"
 )
 
-func Remove(version string) error {
+func Remove(constraint string) error {
+	cachedNodes, err := node.GetCachedVersions(virtual_node_env_dir)
 
-	artifact := node.GetRemoteArtifactTarget(version)
-
-	if artifact == nil {
-		fmt.Fprintf(os.Stderr, "Node version %s not found\n", version)
-		return nil
+	if err != nil {
+		return errors.WithStack(err)
 	}
 
-	dest := filepath.Join(virtual_node_env_dir, "node", artifact.FileName)
+	constraintVer, err := semver.NewConstraint(constraint)
 
-	// 检查文件是否存在
-	if _, err := os.Stat(dest); os.IsNotExist(err) {
-		fmt.Fprintf(os.Stderr, "Node version %s not found\n", version)
-		return nil
+	if err != nil {
+		return errors.WithStack(err)
 	}
 
-	return os.RemoveAll(dest)
+	for _, cache := range cachedNodes {
+		v, err := semver.NewVersion(cache.Version)
+
+		if err != nil {
+			return errors.WithStack(err)
+		}
+
+		if constraintVer.Check(v) {
+			err := os.RemoveAll(cache.FilePath)
+
+			if err != nil {
+				return errors.WithStack(err)
+			}
+
+			fmt.Fprintf(os.Stderr, "Node version %s has been removed\n", cache.Version)
+		}
+	}
+
+	return nil
 }
