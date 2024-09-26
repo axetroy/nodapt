@@ -171,28 +171,3 @@ func RunDirectly(cmd []string) error {
 
 	return nil
 }
-
-// RunWithInstalledVersion executes a command with the currently installed Node.js version.
-// It first retrieves the current Node.js version using node.GetCurrentVersion().
-// If the version is successfully retrieved and is not nil, it runs the command with the specified version constraint
-// using RunWithVersionConstraint(). If there is an error in retrieving the version or running the command,
-// it returns an error with a descriptive message. If the installed version is nil, it runs the command directly
-// using RunDirectly().
-//
-// Parameters:
-//   - command: A slice of strings representing the command to be executed.
-//
-// Returns:
-//   - An error if the operation fails; otherwise, it returns nil.
-func RunWithInstalledVersion(command []string) error {
-	installedVersion := node.GetCurrentVersion()
-
-	if installedVersion != nil {
-		if err := RunWithVersionConstraint(*installedVersion, command); err != nil {
-			return errors.WithMessage(err, "failed to run with version constraint")
-		}
-		return nil
-	} else {
-		return RunDirectly(command)
-	}
-}
