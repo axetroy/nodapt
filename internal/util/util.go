@@ -48,31 +48,64 @@ func IsExecutable(fileInfo os.FileInfo, filePath string) bool {
 	return !fileInfo.IsDir() && (mode&0111 != 0) // Check if any execute bit is set (owner, group, or others)
 }
 
-// FindExecutable checks if a specified file exists in a given directory
-// and determines if it is executable.
+// FindExecutable searches for an executable file in the specified directory.
+// It checks for the presence of a file with the given executable name and
+// appropriate extensions based on the operating system (e.g., ".exe", ".bat", ".cmd"
+// for Windows). The function performs a case-insensitive comparison on Windows and macOS,
+// while it is case-sensitive on other operating systems.
 //
 // Parameters:
-//   - dir: The directory in which to search for the file.
-//   - fileName: The name of the file to check for.
+//   - dir: The directory path to search for the executable.
+//   - executableName: The name of the executable file without the extension.
 //
 // Returns:
-//   - bool: True if the file exists and is executable, false otherwise.
-//   - error: An error if there was an issue checking the file, or nil if no error occurred.
-func FindExecutable(dir, fileName string) (bool, error) {
-	// Get the full path of the file in the directory
-	filePath := filepath.Join(dir, fileName)
+//   - bool: A boolean indicating whether the executable was found.
+//   - error: An error if the directory cannot be read or any other issue occurs during the search.
+func FindExecutable(dir, executableName string) (bool, error) {
+	entries, err := os.ReadDir(dir)
 
-	// Check if the file exists and retrieve its info
-	fileInfo, err := os.Stat(filePath)
-	if os.IsNotExist(err) {
-		return false, nil
-	} else if err != nil {
+	if err != nil {
 		return false, err
 	}
 
-	// Check if the file is executable
-	if IsExecutable(fileInfo, filePath) {
-		return true, nil
+	executableExtensions := []string{}
+
+	if runtime.GOOS == "windows" {
+		executableExtensions = []string{"exe", "bat", "cmd"}
+	}
+
+	// 默认情况下，windows 和 macOS 都对大小写不敏感
+	isCaseInsensitive := runtime.GOOS == "windows" || runtime.GOOS == "darwin"
+
+	for _, entry := range entries {
+		if entry.IsDir() {
+			continue
+		}
+
+		fileName := entry.Name()
+
+	inner:
+		for _, ext := range executableExtensions {
+			var isSameFile bool
+
+			if isCaseInsensitive {
+				// 大小写不敏感的比较
+				isSameFile = strings.EqualFold(fileName, executableName+"."+ext)
+			} else {
+				// 大小写敏感的比较
+				isSameFile = fileName == executableName+"."+ext
+			}
+
+			if isSameFile {
+				info, err := entry.Info()
+
+				if err != nil {
+					continue inner
+				}
+
+				return IsExecutable(info, fileName), nil
+			}
+		}
 	}
 
 	return false, nil
