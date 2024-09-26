@@ -27,8 +27,7 @@
 $ virtual-node-env node -v
 
 # 指定 NodeJS 版本并运行指定命令
-$ virtual-node-env use 18.20.0 node -v
-v18.20.0
+$ virtual-node-env use ^18 node -v
 ```
 
 ### 集成到你的 NodeJS 项目中

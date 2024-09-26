@@ -27,7 +27,7 @@ It will run the command with the appropriate NodeJS version according to the Nod
 $ virtual-node-env node -v
 
 # Specify the NodeJS version and run the specified command
-$ virtual-node-env use 18.20.0 node -v
+$ virtual-node-env use ^18 node -v
 ```
 
 ### Integrate into your NodeJS project
