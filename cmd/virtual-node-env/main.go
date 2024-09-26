@@ -136,7 +136,7 @@ func run() error {
 	switch cmd {
 	case "use":
 		if len(f.Cmd) == 1 {
-			return fmt.Errorf("missing node version")
+			return fmt.Errorf("constraint is required")
 		}
 
 		constraint := f.Cmd[1]
@@ -168,7 +168,7 @@ func run() error {
 		fallthrough
 	default:
 		if len(f.Cmd) == 0 {
-			return errors.New("missing command")
+			return errors.New("commands is required")
 		}
 
 		packageJSONPath := util.LoopUpFile(cwd, "package.json")
