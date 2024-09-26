@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -159,6 +160,10 @@ func RunWithConstraint(constraint string, command []string) error {
 //
 //	error: An error if the command fails to execute, otherwise nil.
 func RunDirectly(cmd []string) error {
+	if len(cmd) == 0 {
+		return errors.New("no command provided")
+	}
+
 	process := exec.Command(cmd[0], cmd[1:]...)
 
 	process.Stdin = os.Stdin
@@ -166,7 +171,7 @@ func RunDirectly(cmd []string) error {
 	process.Stderr = os.Stderr
 
 	if err := process.Run(); err != nil {
-		return errors.WithStack(err)
+		return errors.WithMessage(err, fmt.Sprintf("failed to run command: %s", cmd))
 	}
 
 	return nil
