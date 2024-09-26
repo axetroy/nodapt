@@ -60,7 +60,7 @@ SOURCE CODE:
 
 type Flag struct {
 	IsPrintHelp    bool
-	isPrintVersion bool
+	IsPrintVersion bool
 	Cmd            []string
 }
 
@@ -86,7 +86,7 @@ func parse() (*Flag, error) {
 			case arg == "--help", arg == "-h":
 				f.IsPrintHelp = true
 			case arg == "--version", arg == "-v":
-				f.isPrintVersion = true
+				f.IsPrintVersion = true
 			case arg == "--":
 				if commandIndex == -1 {
 					commandIndex = length
@@ -122,7 +122,7 @@ func run() error {
 		os.Exit(0)
 	}
 
-	if f.isPrintVersion {
+	if f.IsPrintVersion {
 		fmt.Printf("%s %s %s\n", version, commit, date)
 		os.Exit(0)
 	}
