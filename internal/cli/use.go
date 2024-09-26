@@ -51,6 +51,10 @@ func Use(constraint string) error {
 		binaryFileDir = filepath.Join(nodePath, "bin")
 	}
 
+	oldPath := os.Getenv("PATH")
+
+	defer os.Setenv("PATH", oldPath)
+
 	// 设置新的 PATH 变量
 	os.Setenv("PATH", util.AppendEnvPath(binaryFileDir))
 

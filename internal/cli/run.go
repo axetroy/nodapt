@@ -37,6 +37,8 @@ func run(options *RunOptions) error {
 		return errors.New("no command provided")
 	}
 
+	util.Debug("Run command: %s with node %s.\n", options.Cmd, options.Version)
+
 	nodeEnvPath, err := node.Download(options.Version, virtual_node_env_dir)
 
 	if err != nil {
@@ -51,6 +53,7 @@ func run(options *RunOptions) error {
 		binaryFileDir = filepath.Join(nodeEnvPath, "bin")
 	}
 
+	// Check if the node executable exists
 	if ok, err := util.FindExecutable(binaryFileDir, "node"); err != nil {
 		return errors.WithStack(err)
 	} else if !ok {
@@ -60,6 +63,10 @@ func run(options *RunOptions) error {
 	var process *exec.Cmd
 
 	command := options.Cmd[0]
+
+	oldPath := os.Getenv("PATH")
+
+	defer os.Setenv("PATH", oldPath)
 
 	os.Setenv("PATH", util.AppendEnvPath(binaryFileDir))
 
@@ -103,7 +110,7 @@ func RunWithConstraint(constraint string, command []string) error {
 		if ok, err := version_constraint.Match(constraint, *installedVersion); err != nil {
 			return errors.WithStack(err)
 		} else if ok {
-			util.Debug("Current node version is match the constraint, run command directly\n")
+			util.Debug("Current node version %s is match the constraint, run command directly.\n", *installedVersion)
 			return RunDirectly(command)
 		}
 	}
@@ -119,6 +126,7 @@ func RunWithConstraint(constraint string, command []string) error {
 			if ok, err := version_constraint.Match(constraint, node.Version); err != nil {
 				return errors.WithStack(err)
 			} else if ok {
+				util.Debug("Found cached node version %s is match the constraint.\n", node.Version)
 				// Found the match version
 				return run(&RunOptions{
 					Version: node.Version,
