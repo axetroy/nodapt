@@ -48,7 +48,7 @@ for (const pkgName of packages) {
     if (pkgName in fileMap === false)
       throw new Error(`Can not found prebuild file for package '${pkgName}'`);
 
-    const distFolder = fileMap[pkgName];
+    const destFolder = fileMap[pkgName];
 
     const executableFileName =
       "virtual-node-env" + (pkgName.indexOf("windows") > -1 ? ".exe" : "");
@@ -57,7 +57,7 @@ for (const pkgName of packages) {
       __dirname,
       "..",
       "dist",
-      distFolder,
+      destFolder,
       executableFileName
     );
 

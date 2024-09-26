@@ -1,30 +1,32 @@
 package extractor
 
 import (
-	"errors"
 	"path/filepath"
 	"strings"
+
+	"github.com/axetroy/virtual_node_env/internal/util"
+	"github.com/pkg/errors"
 )
 
 // Extract extracts the contents of a compressed file to a specified directory.
-// It supports files with the ".zip" and ".tar.gz" extensions.
+// It supports files with the ".7z" and ".tar.xz" extensions.
 //
 // Parameters:
 //   - fileName: The path to the compressed file to be extracted.
-//   - distFolder: The directory where the contents will be extracted.
+//   - destFolder: The directory where the contents will be extracted.
 //
 // Returns:
 //   - An error if the extraction fails or if the file format is unsupported.
-func Extract(fileName string, distFolder string) error {
+func Extract(fileName string, destFolder string) error {
 	name := filepath.Base(fileName)
 
-	if strings.HasSuffix(name, ".zip") {
-		return extractZip(fileName, distFolder)
-	} else if strings.HasSuffix(name, ".tar.gz") {
-		return extractTarGz(fileName, distFolder)
-	} else if strings.HasSuffix(name, ".tar.xz") {
-		return extractTarXz(fileName, distFolder)
+	util.Debug("Extracting %s to %s\n", name, destFolder)
+
+	if strings.HasSuffix(name, ".tar.xz") {
+		return extractTarXz(fileName, destFolder)
+	} else if strings.HasSuffix(name, ".7z") {
+		return extract7Z(fileName, destFolder)
 	} else {
-		return errors.New("unsupported file format")
+		return errors.Errorf("unsupported file format: %s", name)
 	}
 }

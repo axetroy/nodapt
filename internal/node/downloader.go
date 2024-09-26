@@ -83,11 +83,16 @@ func Download(version string, dir string) (string, error) {
 		return "", errors.New("unsupported node version")
 	}
 
-	destFolder := filepath.Join(dir, "node", artifact.FileName)
+	nodeFolder := filepath.Join(dir, "node")
+	destFolder := filepath.Join(nodeFolder, artifact.FileName)
 
 	// skip download if folder exists
 	if _, err := os.Stat(destFolder); err == nil {
-		return destFolder, nil
+		// make sure the folder is not empty
+
+		if files, err := os.ReadDir(destFolder); err == nil && len(files) > 0 {
+			return destFolder, nil
+		}
 	}
 
 	url := fmt.Sprintf("%sv%s/%s", NODE_MIRROR, version, artifact.FullName)
@@ -105,7 +110,7 @@ func Download(version string, dir string) (string, error) {
 	defer os.Remove(destFile)
 
 	// decompress file
-	if err := extractor.Extract(destFile, filepath.Join(dir, "node")); err != nil {
+	if err := extractor.Extract(destFile, nodeFolder); err != nil {
 		return "", nil
 	}
 
