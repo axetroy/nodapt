@@ -126,7 +126,7 @@ This section explains what happens when you run `virtual-node-env` and how it se
 2. If `package.json` exists:
    1. If the `engines.node` field is specified, use the indicated version.
       1. If the currently installed version matches the specified version, run the command directly.
-      2. Otherwise, install the specified version and run the command.
+      2. Otherwise, select the latest matching version from the remote list, install it, and run the command.
    2. Otherwise, run the command directly.
 3. Otherwise, run the command directly.
 
