@@ -34,7 +34,7 @@ func Use(constraint string) error {
 
 	util.Debug("Current shell: %s\n", shell)
 
-	nodeEnvPath, err := node.Download(*version, virtual_node_env_dir)
+	nodePath, err := node.Download(*version, virtual_node_env_dir)
 
 	if err != nil {
 		return errors.WithStack(err)
@@ -46,14 +46,15 @@ func Use(constraint string) error {
 	var binaryFileDir string
 
 	if runtime.GOOS == "windows" {
-		binaryFileDir = nodeEnvPath
+		binaryFileDir = nodePath
 	} else {
-		binaryFileDir = filepath.Join(nodeEnvPath, "bin")
+		binaryFileDir = filepath.Join(nodePath, "bin")
 	}
 
 	// 设置新的 PATH 变量
 	os.Setenv("PATH", util.AppendEnvPath(binaryFileDir))
 
+	cmd.Env = os.Environ()
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	cmd.Stdin = os.Stdin
