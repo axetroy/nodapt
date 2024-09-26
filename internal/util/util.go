@@ -5,6 +5,8 @@ import (
 	"path/filepath"
 	"runtime"
 	"strings"
+
+	"github.com/pkg/errors"
 )
 
 // GetEnvsWithFallback retrieves the value of the specified environment variables,
@@ -51,7 +53,7 @@ func FindExecutable(dir, executableName string) (bool, error) {
 	// Read directory entries
 	entries, err := os.ReadDir(dir)
 	if err != nil {
-		return false, err
+		return false, errors.WithStack(err)
 	}
 
 	// Determine extensions and case sensitivity based on OS
@@ -64,6 +66,7 @@ func FindExecutable(dir, executableName string) (bool, error) {
 		isCaseInsensitive = true
 	case "darwin":
 		isCaseInsensitive = true
+		executableExtensions = []string{""}
 	default:
 		executableExtensions = []string{""}
 	}
@@ -81,6 +84,7 @@ func FindExecutable(dir, executableName string) (bool, error) {
 
 		// Compare the file name with possible executable names
 		fileName := entry.Name()
+
 		if isCaseInsensitive {
 			fileName = strings.ToLower(fileName)
 		}
@@ -88,8 +92,9 @@ func FindExecutable(dir, executableName string) (bool, error) {
 		for _, ext := range executableExtensions {
 			if fileName == executableName+ext {
 				info, err := entry.Info()
+
 				if err != nil {
-					return false, err
+					return false, errors.WithStack(err)
 				}
 
 				return isExecutable(info, filepath.Join(dir, fileName)), nil
