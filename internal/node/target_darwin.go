@@ -5,24 +5,32 @@ import (
 	"runtime"
 )
 
-func getNodeFileName(version string) string {
-	if runtime.GOARCH == "amd64" {
-		return fmt.Sprintf("node-v%s-darwin-x64", version)
-	} else if runtime.GOARCH == "arm64" {
-		return fmt.Sprintf("node-v%s-darwin-arm64", version)
-	} else {
-		return ""
+func GetRemoteArtifactTarget(version string) *RemoteArtifactTarget {
+	fileName := getNodeFileName(version)
+
+	if fileName == nil {
+		return nil
+	}
+
+	ext := ".tar.gz"
+
+	return &RemoteArtifactTarget{
+		FileName: *fileName,
+		FullName: fmt.Sprintf("%s%s", *fileName, ext),
+		Ext:      ext,
 	}
 }
 
-func getNodeDownloadName(version string) string {
-	fileName := getNodeFileName(version)
-
+func getNodeFileName(version string) *string {
 	if runtime.GOARCH == "amd64" {
-		return fmt.Sprintf("%s.tar.gz", fileName)
+		str := fmt.Sprintf("node-v%s-darwin-x64", version)
+
+		return &str
 	} else if runtime.GOARCH == "arm64" {
-		return fmt.Sprintf("%s.tar.gz", fileName)
+		str := fmt.Sprintf("node-v%s-darwin-arm64", version)
+
+		return &str
 	} else {
-		return ""
+		return nil
 	}
 }

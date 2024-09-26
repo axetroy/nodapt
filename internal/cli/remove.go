@@ -9,9 +9,15 @@ import (
 )
 
 func Remove(version string) error {
-	target := node.GetArtifactName(version)
 
-	dest := filepath.Join(virtual_node_env_dir, "node", target)
+	artifact := node.GetRemoteArtifactTarget(version)
+
+	if artifact == nil {
+		fmt.Fprintf(os.Stderr, "Node version %s not found\n", version)
+		return nil
+	}
+
+	dest := filepath.Join(virtual_node_env_dir, "node", artifact.FileName)
 
 	// 检查文件是否存在
 	if _, err := os.Stat(dest); os.IsNotExist(err) {

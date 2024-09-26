@@ -202,33 +202,25 @@ func extractTarGz(tarGzFilePath, extractToDir string) error {
 	return nil
 }
 
-func GetArtifactName(version string) string {
-	return getNodeFileName(version)
-}
-
 func Download(version string, dir string) (string, error) {
-	fileNameWithoutExt := GetArtifactName(version)
-	fileNameWithExt := getNodeDownloadName(version)
+	artifact := GetRemoteArtifactTarget(version)
 
-	util.Debug("fileNameWithoutExt: %s\n", fileNameWithoutExt)
-	util.Debug("fileNameWithExt: %s\n", fileNameWithExt)
-
-	if fileNameWithoutExt == "" || fileNameWithExt == "" {
+	if artifact == nil {
 		return "", errors.New("unsupported node version")
 	}
 
-	destFolder := filepath.Join(dir, "node", fileNameWithoutExt)
+	destFolder := filepath.Join(dir, "node", artifact.FileName)
 
 	// skip download if folder exists
 	if _, err := os.Stat(destFolder); err == nil {
 		return destFolder, nil
 	}
 
-	url := fmt.Sprintf("%sv%s/%s", NODE_MIRROR, version, fileNameWithExt)
+	url := fmt.Sprintf("%sv%s/%s", NODE_MIRROR, version, artifact.FullName)
 
 	util.Debug("downloadURL: %s\n", url)
 
-	destFile := filepath.Join(dir, "download", fileNameWithExt)
+	destFile := filepath.Join(dir, "download", artifact.FullName)
 
 	// download file
 	if err := downloadFile(url, destFile); err != nil {
