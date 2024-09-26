@@ -101,13 +101,13 @@ func Download(version string, dir string) (string, error) {
 		return "", errors.WithStack(err)
 	}
 
+	// remove downloaded file
+	defer os.Remove(destFile)
+
 	// decompress file
 	if err := extractor.Extract(destFile, filepath.Join(dir, "node")); err != nil {
 		return "", nil
 	}
-
-	// remove downloaded file
-	defer os.Remove(destFile)
 
 	return destFolder, nil
 }
