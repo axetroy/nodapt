@@ -2,7 +2,6 @@ package util
 
 import (
 	"os"
-	"path/filepath"
 	"runtime"
 	"strings"
 )
@@ -29,23 +28,6 @@ func GetEnvsWithFallback(fallback string, keys ...string) string {
 	}
 
 	return fallback
-}
-
-func IsExecutable(fileInfo os.FileInfo, filePath string) bool {
-	if runtime.GOOS == "windows" {
-		// Windows: check for common executable extensions
-		ext := filepath.Ext(filePath)
-		executableExtensions := []string{".exe", ".bat", ".cmd"}
-		for _, e := range executableExtensions {
-			if strings.EqualFold(ext, e) {
-				return true
-			}
-		}
-		return false
-	}
-	// Unix-based systems: check executable permission
-	mode := fileInfo.Mode()
-	return !fileInfo.IsDir() && (mode&0111 != 0) // Check if any execute bit is set (owner, group, or others)
 }
 
 // FindExecutable searches for an executable file in the specified directory.
@@ -105,7 +87,7 @@ func FindExecutable(dir, executableName string) (bool, error) {
 					continue inner
 				}
 
-				return IsExecutable(info, fileName), nil
+				return isExecutable(info, fileName), nil
 			}
 		}
 	}
