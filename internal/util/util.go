@@ -68,10 +68,12 @@ func FindExecutable(dir, executableName string) (bool, error) {
 		return false, err
 	}
 
-	executableExtensions := []string{}
+	var executableExtensions []string
 
 	if runtime.GOOS == "windows" {
 		executableExtensions = []string{".exe", ".bat", ".cmd"}
+	} else {
+		executableExtensions = []string{""}
 	}
 
 	// 默认情况下，windows 和 macOS 都对大小写不敏感
