@@ -24,29 +24,30 @@ func printHelp() {
 USAGE:
   virtual-node-env [OPTIONS] <ARGS...>
   virtual-node-env [OPTIONS] run <ARGS...>
-  virtual-node-env [OPTIONS] use <VERSION> <ARGS...>
+  virtual-node-env [OPTIONS] use <CONSTRAINT> <ARGS...>
+  virtual-node-env [OPTIONS] rm <CONSTRAINT> <ARGS...>
   virtual-node-env [OPTIONS] clean
-  virtual-node-env [OPTIONS] ls|list
-  virtual-node-env [OPTIONS] ls-remote|list-remote
+  virtual-node-env [OPTIONS] ls
+  virtual-node-env [OPTIONS] ls-remote
 
 COMMANDS:
-  run <ARGS...>              Automatically select node version to run commands
-  use <VERSION> <ARGS...>    Use the specified version of node to run the command
-  rm|remove <VERSION>        Remove the specified version of node that installed by virtual-node-env
-  clean                      Remove all the node version that installed by virtual-node-env
-  ls|list                    List all the installed node version
-  ls-remote|list-remote      List all the available node version
-  <ARGS...>                  Alias for 'run <ARGS...>' but shorter
+  run <ARGS...>               Automatically select node version to run commands
+  use <CONSTRAINT> <ARGS...>  Use the specified version of node to run the command
+  rm|remove <CONSTRAINT>      Remove the specified version of node that installed by virtual-node-env
+  clean                       Remove all the node version that installed by virtual-node-env
+  ls|list                     List all the installed node version
+  ls-remote|list-remote       List all the available node version
+  <ARGS...>                   Alias for 'run <ARGS...>' but shorter
 
 OPTIONS:
-  --help|-h                  Print help information
-  --version|-v               Print version information
+  --help|-h                   Print help information
+  --version|-v                Print version information
 
 ENVIRONMENT VARIABLES:
-  NODE_MIRROR                The mirror of the nodejs download, defaults to: https://nodejs.org/dist/
-                             Chinese users defaults to: https://registry.npmmirror.com/-/binary/node/
-  NODE_ENV_DIR               The directory where the nodejs is stored, defaults to: $HOME/.virtual-node-env
-  DEBUG                      Print debug information when set DEBUG=1
+  NODE_MIRROR                 The mirror of the nodejs download, defaults to: https://nodejs.org/dist/
+                              Chinese users defaults to: https://registry.npmmirror.com/-/binary/node/
+  NODE_ENV_DIR                The directory where the nodejs is stored, defaults to: $HOME/.virtual-node-env
+  DEBUG                       Print debug information when set DEBUG=1
 
 EXAMPLES:
   virtual-node-env node -v
@@ -58,9 +59,9 @@ SOURCE CODE:
 }
 
 type Flag struct {
-	Help    bool
-	Version bool
-	Cmd     []string
+	IsPrintHelp    bool
+	isPrintVersion bool
+	Cmd            []string
 }
 
 func parse() (*Flag, error) {
@@ -83,9 +84,9 @@ func parse() (*Flag, error) {
 		if strings.HasPrefix(arg, "--") || strings.HasPrefix(arg, "-") {
 			switch true {
 			case arg == "--help", arg == "-h":
-				f.Help = true
+				f.IsPrintHelp = true
 			case arg == "--version", arg == "-v":
-				f.Version = true
+				f.isPrintVersion = true
 			case arg == "--":
 				if commandIndex == -1 {
 					commandIndex = length
@@ -116,12 +117,12 @@ func run() error {
 		return errors.WithStack(err)
 	}
 
-	if f.Help {
+	if f.IsPrintHelp {
 		printHelp()
 		os.Exit(0)
 	}
 
-	if f.Version {
+	if f.isPrintVersion {
 		fmt.Printf("%s %s %s\n", version, commit, date)
 		os.Exit(0)
 	}
@@ -150,7 +151,7 @@ func run() error {
 		}
 	case "rm", "remove":
 		if len(f.Cmd) == 1 {
-			return fmt.Errorf("missing node version")
+			return fmt.Errorf("constraint is required")
 		}
 
 		nodeVersion := strings.TrimPrefix(f.Cmd[1], "v")
@@ -173,18 +174,18 @@ func run() error {
 
 		packageJSONPath := util.LoopUpFile(cwd, "package.json")
 
-		// If the package.json file is found, then use the node version in the package.json to run the command
+		// If the package.json file is found, then use the node constraint in the package.json to run the command
 		if packageJSONPath != nil {
-			util.Debug("Use node version from %s\n", *packageJSONPath)
+			util.Debug("Use node constraint from %s\n", *packageJSONPath)
 
 			constraint, err := node.GetConstraintFromPackageJSON(*packageJSONPath)
 
 			if err != nil {
-				return errors.WithMessagef(err, "failed to get node constraint version from %s", *packageJSONPath)
+				return errors.WithMessagef(err, "failed to get node constraint from %s", *packageJSONPath)
 			}
 
 			if constraint != nil {
-				util.Debug("Use node version constraint: %s\n", *constraint)
+				util.Debug("Use node constraint: %s\n", *constraint)
 				return cli.RunWithVersionConstraint(*constraint, f.Cmd)
 			} else {
 				util.Debug("Run command directly\n")
