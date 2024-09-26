@@ -38,7 +38,7 @@ func readPackageJSON(path string) (PackageJSON, error) {
 	return packageJSON, nil
 }
 
-// GetVersionFromPackageJSON retrieves the Node.js version specified in the
+// GetConstraintFromPackageJSON retrieves the Node.js version specified in the
 // "engines" field of a package.json file located at the given path.
 //
 // Parameters:
@@ -48,7 +48,7 @@ func readPackageJSON(path string) (PackageJSON, error) {
 //   - A pointer to a string containing the Node.js version if found, or nil
 //     if the version is not specified.
 //   - An error if there was an issue reading the package.json file.
-func GetVersionFromPackageJSON(packageJSONPath string) (*string, error) {
+func GetConstraintFromPackageJSON(packageJSONPath string) (*string, error) {
 	packageJSON, err := readPackageJSON(packageJSONPath)
 
 	if err != nil {

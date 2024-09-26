@@ -5,10 +5,12 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
+	"sort"
 	"strings"
 
 	"github.com/axetroy/virtual_node_env/internal/node"
 	"github.com/axetroy/virtual_node_env/internal/util"
+	"github.com/axetroy/virtual_node_env/internal/version_constraint"
 	"github.com/pkg/errors"
 )
 
@@ -85,20 +87,53 @@ func Run(options *RunOptions) error {
 // version, it returns an error.
 //
 // Parameters:
-//   - semverVersionConstraint: A string representing the semantic version constraint.
+//   - constraint: A string representing the semantic version constraint.
 //   - command: A slice of strings representing the command to be executed.he
 //
 // Returns:
 //   - error: Returns an error if the version cannot be matched or if the command fails to execute.md[1:]...)
-func RunWithVersionConstraint(semverVersionConstraint string, command []string) error {
-	matchVersion, err := node.GetMatchVersion(semverVersionConstraint)
+func RunWithVersionConstraint(constraint string, command []string) error {
+	installedVersion := node.GetCurrentVersion()
+
+	// If the node version is installed and the version satisfies the constraint, then run the command directly
+	if installedVersion != nil {
+		util.Debug("Current node version: %s\n", *installedVersion)
+		if ok, err := version_constraint.Match(constraint, *installedVersion); err != nil {
+			return errors.WithStack(err)
+		} else if ok {
+			util.Debug("Current node version is match the constraint, run command directly\n")
+			return RunDirectly(command)
+		}
+	}
+
+	// Found cached node version
+	if cachedNodes, err := node.GetCachedVersions(virtual_node_env_dir); err != nil {
+		return errors.WithStack(err)
+	} else {
+		// Sort versions in descending order
+		sort.Sort(sort.Reverse(node.ByVersion(cachedNodes)))
+
+		for _, node := range cachedNodes {
+			if ok, err := version_constraint.Match(constraint, node.Version); err != nil {
+				return errors.WithStack(err)
+			} else if ok {
+				// Found the match version
+				return Run(&RunOptions{
+					Version: node.Version,
+					Cmd:     command,
+				})
+			}
+		}
+	}
+
+	matchVersion, err := node.GetMatchVersion(constraint)
 
 	if err != nil {
 		return errors.WithMessage(err, "failed to get match version")
 	}
 
 	if matchVersion == nil {
-		return errors.Errorf("no match version found for %s", semverVersionConstraint)
+		return errors.Errorf("no match version found for %s", constraint)
 	}
 
 	return Run(&RunOptions{
@@ -150,11 +185,7 @@ func RunDirectly(cmd []string) error {
 // Returns:
 //   - An error if the operation fails; otherwise, it returns nil.
 func RunWithInstalledVersion(command []string) error {
-	installedVersion, err := node.GetCurrentVersion()
-
-	if err != nil {
-		return errors.WithMessage(err, "failed to get current node version")
-	}
+	installedVersion := node.GetCurrentVersion()
 
 	if installedVersion != nil {
 		if err := RunWithVersionConstraint(*installedVersion, command); err != nil {

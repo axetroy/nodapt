@@ -69,7 +69,7 @@ func TestGetVersionFromPackageJSON(t *testing.T) {
 			}
 
 			// Call the function under test
-			result, err := GetVersionFromPackageJSON(tmpfile.Name())
+			result, err := GetConstraintFromPackageJSON(tmpfile.Name())
 
 			// Check for unexpected errors
 			if (err != nil) != tt.expectError {

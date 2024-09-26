@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"os/exec"
+	"strings"
 
 	"github.com/axetroy/virtual_node_env/internal/version_constraint"
 	"github.com/pkg/errors"
@@ -72,16 +73,20 @@ func GetMatchVersion(constraint string) (*string, error) {
 // Returns:
 //   - A pointer to a string containing the Node.js version, or nil if an error occurred.
 //   - An error if the command fails to execute or if there is an issue retrieving the version.
-func GetCurrentVersion() (*string, error) {
+func GetCurrentVersion() *string {
 	cmd := exec.Command("node", "-v")
 
 	output, err := cmd.Output()
 
 	if err != nil {
-		return nil, errors.WithMessage(err, "failed to get current node version")
+		return nil
 	}
 
-	version := string(output)
+	version := strings.TrimPrefix(strings.TrimSpace(string(output)), "v")
 
-	return &version, nil
+	if version == "" {
+		return nil
+	}
+
+	return &version
 }

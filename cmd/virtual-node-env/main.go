@@ -177,15 +177,15 @@ func run() error {
 		if packageJSONPath != nil {
 			util.Debug("Use node version from %s\n", *packageJSONPath)
 
-			semverVersionConstraint, err := node.GetVersionFromPackageJSON(*packageJSONPath)
+			constraint, err := node.GetConstraintFromPackageJSON(*packageJSONPath)
 
 			if err != nil {
 				return errors.WithMessagef(err, "failed to get node constraint version from %s", *packageJSONPath)
 			}
 
-			if semverVersionConstraint != nil {
-				util.Debug("Use node version constraint: %s\n", *semverVersionConstraint)
-				return cli.RunWithVersionConstraint(*semverVersionConstraint, f.Cmd)
+			if constraint != nil {
+				util.Debug("Use node version constraint: %s\n", *constraint)
+				return cli.RunWithVersionConstraint(*constraint, f.Cmd)
 			} else {
 				util.Debug("Run command directly\n")
 				return cli.RunDirectly(f.Cmd)
