@@ -34,6 +34,10 @@ type RunOptions struct {
 //   - An error if the command fails to execute or if there is an issue
 //     downloading the specified Node.js version; otherwise, it returns nil.
 func run(options *RunOptions) error {
+	if len(options.Cmd) == 0 {
+		return errors.New("no command provided")
+	}
+
 	nodeVersion := strings.TrimPrefix(options.Version, "v")
 
 	nodeEnvPath, err := node.Download(nodeVersion, virtual_node_env_dir)

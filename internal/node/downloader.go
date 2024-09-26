@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/axetroy/virtual_node_env/internal/extractor"
 	"github.com/axetroy/virtual_node_env/internal/util"
@@ -77,6 +78,9 @@ func downloadFile(url string, fileName string) error {
 }
 
 func Download(version string, dir string) (string, error) {
+	// Remove the 'v' prefix from the version
+	version = strings.TrimPrefix(version, "v")
+
 	artifact := GetRemoteArtifactTarget(version)
 
 	if artifact == nil {
