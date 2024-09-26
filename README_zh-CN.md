@@ -59,29 +59,30 @@ virtual-node-env - A virtual node environment for node.js, node version manager 
 USAGE:
   virtual-node-env [OPTIONS] <ARGS...>
   virtual-node-env [OPTIONS] run <ARGS...>
-  virtual-node-env [OPTIONS] use <VERSION> <ARGS...>
+  virtual-node-env [OPTIONS] use <CONSTRAINT> <ARGS...>
+  virtual-node-env [OPTIONS] rm <CONSTRAINT> <ARGS...>
   virtual-node-env [OPTIONS] clean
-  virtual-node-env [OPTIONS] ls|list
-  virtual-node-env [OPTIONS] ls-remote|list-remote
+  virtual-node-env [OPTIONS] ls
+  virtual-node-env [OPTIONS] ls-remote
 
 COMMANDS:
-  run <ARGS...>              Automatically select node version to run commands
-  use <VERSION> <ARGS...>    Use the specified version of node to run the command
-  rm|remove <VERSION>        Remove the specified version of node that installed by virtual-node-env
-  clean                      Remove all the node version that installed by virtual-node-env
-  ls|list                    List all the installed node version
-  ls-remote|list-remote      List all the available node version
-  <ARGS...>                  Alias for 'run <ARGS...>' but shorter
+  run <ARGS...>               Automatically select node version to run commands
+  use <CONSTRAINT> <ARGS...>  Use the specified version of node to run the command
+  rm|remove <CONSTRAINT>      Remove the specified version of node that installed by virtual-node-env
+  clean                       Remove all the node version that installed by virtual-node-env
+  ls|list                     List all the installed node version
+  ls-remote|list-remote       List all the available node version
+  <ARGS...>                   Alias for 'run <ARGS...>' but shorter
 
 OPTIONS:
-  --help|-h                  Print help information
-  --version|-v               Print version information
+  --help|-h                   Print help information
+  --version|-v                Print version information
 
 ENVIRONMENT VARIABLES:
-  NODE_MIRROR                The mirror of the nodejs download, defaults to: https://nodejs.org/dist/
-                             Chinese users defaults to: https://registry.npmmirror.com/-/binary/node/
-  NODE_ENV_DIR               The directory where the nodejs is stored, defaults to: $HOME/.virtual-node-env
-  DEBUG                      Print debug information when set DEBUG=1
+  NODE_MIRROR                 The mirror of the nodejs download, defaults to: https://nodejs.org/dist/
+                              Chinese users defaults to: https://registry.npmmirror.com/-/binary/node/
+  NODE_ENV_DIR                The directory where the nodejs is stored, defaults to: $HOME/.virtual-node-env
+  DEBUG                       Print debug information when set DEBUG=1
 
 EXAMPLES:
   virtual-node-env node -v
