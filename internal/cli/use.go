@@ -6,6 +6,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
+	"strings"
 
 	"github.com/axetroy/virtual_node_env/internal/node"
 	"github.com/axetroy/virtual_node_env/internal/shell"
@@ -13,7 +14,20 @@ import (
 	"github.com/pkg/errors"
 )
 
-func Use(version string) error {
+func Use(constraint string) error {
+	constraint = strings.TrimPrefix(constraint, "v")
+
+	println(constraint)
+
+	version, err := node.GetMatchVersion(constraint)
+
+	if err != nil {
+		return errors.WithStack(err)
+	}
+
+	if version == nil {
+		return errors.Errorf("Can not found the version of node which match the constraint: %s", constraint)
+	}
 
 	shell, err := shell.GetPath()
 
@@ -23,7 +37,7 @@ func Use(version string) error {
 
 	util.Debug("shell: %s\n", shell)
 
-	nodeEnvPath, err := node.Download(version, virtual_node_env_dir)
+	nodeEnvPath, err := node.Download(*version, virtual_node_env_dir)
 
 	if err != nil {
 		return errors.WithStack(err)
@@ -53,7 +67,7 @@ func Use(version string) error {
 	}
 
 	// Write to the stdin of the shell and ignore error
-	_, _ = fmt.Fprintf(os.Stdin, "Now you are using node v%s\n", version)
+	_, _ = fmt.Fprintf(os.Stdin, "Now you are using node v%s\n", *version)
 
 	if err := cmd.Wait(); err != nil {
 		return errors.WithStack(err)

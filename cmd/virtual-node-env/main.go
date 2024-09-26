@@ -138,17 +138,15 @@ func run() error {
 			return fmt.Errorf("missing node version")
 		}
 
-		nodeVersion := strings.TrimPrefix(f.Cmd[1], "v")
+		constraint := strings.TrimPrefix(f.Cmd[1], "v")
 
 		commands := f.Cmd[2:]
 
 		if len(commands) == 0 {
-			return cli.Use(nodeVersion)
+			return cli.Use(constraint)
 		} else {
-			return cli.Run(&cli.RunOptions{
-				Version: nodeVersion,
-				Cmd:     commands,
-			})
+
+			return cli.RunWithVersionConstraint(constraint, commands)
 		}
 	case "rm", "remove":
 		if len(f.Cmd) == 1 {
