@@ -65,8 +65,8 @@ func FindExecutable(dir, executableName string) (bool, error) {
 		executableExtensions = []string{".exe", ".bat", ".cmd"}
 		isCaseInsensitive = true
 	case "darwin":
-		isCaseInsensitive = true
 		executableExtensions = []string{""}
+		isCaseInsensitive = true
 	default:
 		executableExtensions = []string{""}
 	}
