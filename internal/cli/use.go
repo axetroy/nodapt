@@ -64,7 +64,7 @@ func Use(constraint string) error {
 	}
 
 	// Write to the stdin of the shell and ignore error
-	_, _ = fmt.Fprintf(os.Stdin, "Now you are using node v%s\n", *version)
+	_, _ = fmt.Fprintf(os.Stdin, "Now you are using node %s\n", *version)
 
 	if err := cmd.Wait(); err != nil {
 		return errors.WithStack(err)
