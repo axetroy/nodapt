@@ -12,7 +12,7 @@ func GetRemoteArtifactTarget(version string) *RemoteArtifactTarget {
 		return nil
 	}
 
-	ext := ".tar.gz"
+	ext := ".tar.xz"
 
 	return &RemoteArtifactTarget{
 		FileName: *fileName,
