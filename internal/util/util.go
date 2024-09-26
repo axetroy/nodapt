@@ -2,6 +2,7 @@ package util
 
 import (
 	"os"
+	"path/filepath"
 	"runtime"
 	"strings"
 )
@@ -47,50 +48,51 @@ func GetEnvsWithFallback(fallback string, keys ...string) string {
 //   - bool: A boolean indicating whether the executable was found.
 //   - error: An error if the directory cannot be read or any other issue occurs during the search.
 func FindExecutable(dir, executableName string) (bool, error) {
+	// Read directory entries
 	entries, err := os.ReadDir(dir)
-
 	if err != nil {
 		return false, err
 	}
 
+	// Determine extensions and case sensitivity based on OS
 	var executableExtensions []string
+	isCaseInsensitive := false
 
-	if runtime.GOOS == "windows" {
+	switch runtime.GOOS {
+	case "windows":
 		executableExtensions = []string{".exe", ".bat", ".cmd"}
-	} else {
+		isCaseInsensitive = true
+	case "darwin":
+		isCaseInsensitive = true
+	default:
 		executableExtensions = []string{""}
 	}
 
-	// 默认情况下，windows 和 macOS 都对大小写不敏感
-	isCaseInsensitive := runtime.GOOS == "windows" || runtime.GOOS == "darwin"
+	// Normalize the executable name for case-insensitive comparison
+	if isCaseInsensitive {
+		executableName = strings.ToLower(executableName)
+	}
 
+	// Check each file in the directory
 	for _, entry := range entries {
 		if entry.IsDir() {
 			continue
 		}
 
+		// Compare the file name with possible executable names
 		fileName := entry.Name()
+		if isCaseInsensitive {
+			fileName = strings.ToLower(fileName)
+		}
 
-	inner:
 		for _, ext := range executableExtensions {
-			var isSameFile bool
-
-			if isCaseInsensitive {
-				// 大小写不敏感的比较
-				isSameFile = strings.EqualFold(fileName, executableName+ext)
-			} else {
-				// 大小写敏感的比较
-				isSameFile = fileName == executableName+ext
-			}
-
-			if isSameFile {
+			if fileName == executableName+ext {
 				info, err := entry.Info()
-
 				if err != nil {
-					continue inner
+					return false, err
 				}
 
-				return isExecutable(info, fileName), nil
+				return isExecutable(info, filepath.Join(dir, fileName)), nil
 			}
 		}
 	}
