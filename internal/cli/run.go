@@ -47,6 +47,12 @@ func Run(options *RunOptions) error {
 		binaryFileDir = filepath.Join(nodeEnvPath, "bin")
 	}
 
+	if ok, err := util.FindExecutable(binaryFileDir, "node"); err != nil {
+		return errors.WithStack(err)
+	} else if !ok {
+		return errors.Errorf("node executable not found in %s, You should try to remove it.", binaryFileDir)
+	}
+
 	var process *exec.Cmd
 
 	command := options.Cmd[0]
