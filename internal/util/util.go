@@ -71,7 +71,7 @@ func FindExecutable(dir, executableName string) (bool, error) {
 	executableExtensions := []string{}
 
 	if runtime.GOOS == "windows" {
-		executableExtensions = []string{"exe", "bat", "cmd"}
+		executableExtensions = []string{".exe", ".bat", ".cmd"}
 	}
 
 	// 默认情况下，windows 和 macOS 都对大小写不敏感
@@ -90,10 +90,10 @@ func FindExecutable(dir, executableName string) (bool, error) {
 
 			if isCaseInsensitive {
 				// 大小写不敏感的比较
-				isSameFile = strings.EqualFold(fileName, executableName+"."+ext)
+				isSameFile = strings.EqualFold(fileName, executableName+ext)
 			} else {
 				// 大小写敏感的比较
-				isSameFile = fileName == executableName+"."+ext
+				isSameFile = fileName == executableName+ext
 			}
 
 			if isSameFile {
