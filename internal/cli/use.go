@@ -6,7 +6,6 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
-	"strings"
 
 	"github.com/axetroy/virtual_node_env/internal/node"
 	"github.com/axetroy/virtual_node_env/internal/shell"
@@ -15,8 +14,6 @@ import (
 )
 
 func Use(constraint string) error {
-	constraint = strings.TrimPrefix(constraint, "v")
-
 	println(constraint)
 
 	version, err := node.GetMatchVersion(constraint)

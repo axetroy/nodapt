@@ -139,8 +139,7 @@ func run() error {
 			return fmt.Errorf("missing node version")
 		}
 
-		constraint := strings.TrimPrefix(f.Cmd[1], "v")
-
+		constraint := f.Cmd[1]
 		commands := f.Cmd[2:]
 
 		if len(commands) == 0 {
