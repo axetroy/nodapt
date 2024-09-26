@@ -14,7 +14,7 @@ import (
 )
 
 func Use(constraint string) error {
-	println(constraint)
+	util.Debug("Use constraint: %s\n", constraint)
 
 	version, err := node.GetMatchVersion(constraint)
 
