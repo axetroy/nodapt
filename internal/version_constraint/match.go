@@ -20,13 +20,13 @@ func Match(constraint string, version string) (bool, error) {
 	c, err := semver.NewConstraint(constraint)
 
 	if err != nil {
-		return false, errors.WithMessage(err, "failed to parse version range")
+		return false, errors.WithMessagef(err, "failed to parse version range %s", constraint)
 	}
 
 	v, err := semver.NewVersion(version)
 
 	if err != nil {
-		return false, errors.WithMessage(err, "failed to parse version")
+		return false, errors.WithMessagef(err, "failed to parse version %s", version)
 	}
 
 	return c.Check(v), nil
