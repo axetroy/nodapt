@@ -32,7 +32,7 @@ func Use(constraint string) error {
 		return errors.WithMessage(err, "Can not found shell")
 	}
 
-	util.Debug("shell: %s\n", shell)
+	util.Debug("Current shell: %s\n", shell)
 
 	nodeEnvPath, err := node.Download(*version, virtual_node_env_dir)
 
