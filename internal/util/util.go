@@ -17,13 +17,16 @@ import (
 // Returns:
 //   - The value of the first found environment variable or the fallback value if none are found.
 func GetEnvsWithFallback(fallback string, keys ...string) string {
+	// Iterate through the provided keys
 	for _, key := range keys {
-		if value := os.Getenv(strings.ToUpper(key)); value != "" {
-			return value
-		}
+		// Prepare the uppercase and lowercase versions of the key
+		keysToCheck := []string{strings.ToUpper(key), strings.ToLower(key)}
 
-		if value := os.Getenv(strings.ToLower(key)); value != "" {
-			return value
+		// Check both versions for a non-empty value
+		for _, k := range keysToCheck {
+			if value := os.Getenv(k); value != "" {
+				return value
+			}
 		}
 	}
 
