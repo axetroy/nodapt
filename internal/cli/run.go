@@ -7,7 +7,6 @@ import (
 	"path/filepath"
 	"runtime"
 	"sort"
-	"strings"
 
 	"github.com/axetroy/virtual_node_env/internal/node"
 	"github.com/axetroy/virtual_node_env/internal/util"
@@ -38,9 +37,7 @@ func run(options *RunOptions) error {
 		return errors.New("no command provided")
 	}
 
-	nodeVersion := strings.TrimPrefix(options.Version, "v")
-
-	nodeEnvPath, err := node.Download(nodeVersion, virtual_node_env_dir)
+	nodeEnvPath, err := node.Download(options.Version, virtual_node_env_dir)
 
 	if err != nil {
 		return errors.WithStack(err)

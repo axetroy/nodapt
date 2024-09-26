@@ -82,7 +82,7 @@ func GetCurrentVersion() *string {
 		return nil
 	}
 
-	version := strings.TrimPrefix(strings.TrimSpace(string(output)), "v")
+	version := strings.TrimSpace(string(output))
 
 	if version == "" {
 		return nil
