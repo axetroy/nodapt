@@ -7,6 +7,7 @@ require (
 	github.com/cheggaaa/pb/v3 v3.1.5
 	github.com/pkg/errors v0.9.1
 	github.com/stretchr/testify v1.9.0
+	github.com/ulikunitz/xz v0.5.12
 )
 
 require (
