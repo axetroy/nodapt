@@ -147,7 +147,7 @@ func run() error {
 			return cli.Use(constraint)
 		} else {
 
-			return cli.RunWithVersionConstraint(constraint, commands)
+			return cli.RunWithConstraint(constraint, commands)
 		}
 	case "rm", "remove":
 		if len(f.Cmd) == 1 {
@@ -186,7 +186,7 @@ func run() error {
 
 			if constraint != nil {
 				util.Debug("Use node constraint: %s\n", *constraint)
-				return cli.RunWithVersionConstraint(*constraint, f.Cmd)
+				return cli.RunWithConstraint(*constraint, f.Cmd)
 			} else {
 				util.Debug("Run command directly\n")
 				return cli.RunDirectly(f.Cmd)

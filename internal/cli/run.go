@@ -15,8 +15,8 @@ import (
 )
 
 type RunOptions struct {
-	Version string   `json:"version"`
-	Cmd     []string `json:"cmd"`
+	Version string   `json:"version"` // The version of Node.js to use
+	Cmd     []string `json:"cmd"`     // The command to execute
 }
 
 // Run executes a command using a specified version of Node.js.
@@ -32,7 +32,7 @@ type RunOptions struct {
 // Returns:
 //   - An error if the command fails to execute or if there is an issue
 //     downloading the specified Node.js version; otherwise, it returns nil.
-func Run(options *RunOptions) error {
+func run(options *RunOptions) error {
 	nodeVersion := strings.TrimPrefix(options.Version, "v")
 
 	nodeEnvPath, err := node.Download(nodeVersion, virtual_node_env_dir)
@@ -78,7 +78,7 @@ func Run(options *RunOptions) error {
 	return nil
 }
 
-// RunWithVersionConstraint executes a command with a specified version constraint.
+// RunWithConstraint executes a command with a specified version constraint.
 //
 // It takes a semantic version constraint as a string and a slice of strings representing
 // the command to be executed. The function attempts to find a matching version based on
@@ -92,7 +92,7 @@ func Run(options *RunOptions) error {
 //
 // Returns:
 //   - error: Returns an error if the version cannot be matched or if the command fails to execute.md[1:]...)
-func RunWithVersionConstraint(constraint string, command []string) error {
+func RunWithConstraint(constraint string, command []string) error {
 	installedVersion := node.GetCurrentVersion()
 
 	// If the node version is installed and the version satisfies the constraint, then run the command directly
@@ -118,7 +118,7 @@ func RunWithVersionConstraint(constraint string, command []string) error {
 				return errors.WithStack(err)
 			} else if ok {
 				// Found the match version
-				return Run(&RunOptions{
+				return run(&RunOptions{
 					Version: node.Version,
 					Cmd:     command,
 				})
@@ -136,7 +136,7 @@ func RunWithVersionConstraint(constraint string, command []string) error {
 		return errors.Errorf("no match version found for %s", constraint)
 	}
 
-	return Run(&RunOptions{
+	return run(&RunOptions{
 		Version: *matchVersion,
 		Cmd:     command,
 	})
