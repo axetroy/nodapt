@@ -1,34 +1,33 @@
+English | [中文简体](README_zh-CN.md)
+
 [![Build Status](https://github.com/axetroy/virtual-node-env/workflows/ci/badge.svg)](https://github.com/axetroy/virtual-node-env/actions)
 [![Go Report Card](https://goreportcard.com/badge/github.com/axetroy/virtual-node-env)](https://goreportcard.com/report/github.com/axetroy/virtual-node-env)
 ![Latest Version](https://img.shields.io/github/v/release/axetroy/virtual-node-env.svg)
 [![996.icu](https://img.shields.io/badge/link-996.icu-red.svg)](https://996.icu)
 ![Repo Size](https://img.shields.io/github/repo-size/axetroy/virtual-node-env.svg)
 
-### Intention
+### Background
 
-This project is used to switch node versions, but it does not want global node version management tools such as [nvm](https://github.com/nvm-sh/nvm).
+When developing NodeJS projects, we often need to switch NodeJS versions. For example, project A requires `16.x.y`, while project B uses `20.x.y`.
 
-It is not a global switch, but follows the project. For example, project A requires `16.x.y`, while project B uses `20.x.y`.
+However, global version management tools like nvm cannot meet the requirements. It has the following problems:
 
-This tool allows you not to pay attention to which version of node you should use in the project.
+1. nvm is not cross-platform, and it is not very convenient to use on Windows.
+2. nvm needs to install the specified version in advance to switch, which is not very friendly to the CI/CD environment.
+3. In a Monorepo, there may be a situation where package A requires `16.x.y`, while package B requires `20.x.y`. In this case, nvm cannot solve this problem well.
 
-### Features
+So I developed this tool to solve this problem.
 
-- [x] Cross-platform supports. including windows
-- [x] Automatically download node
-- [x] Support `use` command to switch node version temporarily
+It will run the command with the appropriate NodeJS version according to the NodeJS version constraint in `packages.json`.
 
 ### Usage
 
 ```bash
-# Start a new shell with the specified node version
-$ virtual-node-env use 16.20.0
-$ node -v
-16.20.0
+# Automatically select the NodeJS version to run the command
+$ virtual-node-env node -v
 
-# Specify the node version and run the specified command
+# Specify the NodeJS version and run the specified command
 $ virtual-node-env use 18.20.0 node -v
-v18.20.0
 ```
 
 ### Integrate into your NodeJS project
@@ -51,7 +50,7 @@ v18.20.0
 + virtual-node-env yarn dev
 ```
 
-### Install
+### Installation
 
 1. Install via [Cask](https://github.com/cask-pkg/cask.rs) (Mac/Linux/Windows)
 
@@ -73,7 +72,7 @@ $ vnode --help
 
 ```bash
 $ virtual-node-env clean
-# then remove the binary file or uninstall vir package manager
+# then remove the binary file or uninstall via package manager
 ```
 
 ### NodeJS version selection algorithm
