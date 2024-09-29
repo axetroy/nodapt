@@ -61,8 +61,16 @@ func extractTarXzFile(reader *tar.Reader, header *tar.Header, destFolder string)
 
 	// If the file is executable, ensure proper permissions.
 	if header.FileInfo().Mode()&0111 != 0 {
-		if err := os.Chmod(destPath, os.FileMode(header.Mode)); err != nil {
+		if _, err := os.Stat(destPath); err != nil {
+			if os.IsNotExist(err) {
+				return nil
+			}
+
 			return errors.WithStack(err)
+		} else {
+			if err := os.Chmod(destPath, os.FileMode(header.Mode)); err != nil {
+				return errors.WithStack(err)
+			}
 		}
 	}
 
