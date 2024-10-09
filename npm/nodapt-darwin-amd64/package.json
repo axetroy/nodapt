@@ -1,10 +1,10 @@
 {
-  "name": "@axetroy/virtual-node-env-windows-arm64",
+  "name": "@axetroy/nodapt-darwin-amd64",
   "version": "0.1.0",
-  "description": "The Windows arm64 binary for virtual-node-env",
+  "description": "The MacOS 64-bit binary for nodapt",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/axetroy/virtual-node-env.git"
+    "url": "git+https://github.com/axetroy/nodapt.git"
   },
   "license": "Anti-996 License",
   "private": false,
@@ -13,12 +13,12 @@
     "node": ">=12"
   },
   "files": [
-    "virtual-node-env.exe"
+    "nodapt"
   ],
   "os": [
-    "win32"
+    "darwin"
   ],
   "cpu": [
-    "arm64"
+    "x64"
   ]
 }

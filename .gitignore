@@ -20,4 +20,4 @@ coverage.out
 release.md
 node_modules
 .DS_Store
-npm/download/virtual-node-env*
+npm/download/nodapt*

@@ -1,10 +1,10 @@
 {
-  "name": "@axetroy/virtual-node-env-linux-amd64",
+  "name": "@axetroy/nodapt-linux-amd64",
   "version": "0.1.0",
-  "description": "The Linux 64-Bit binary for virtual-node-env",
+  "description": "The Linux 64-Bit binary for nodapt",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/axetroy/virtual-node-env.git"
+    "url": "git+https://github.com/axetroy/nodapt.git"
   },
   "license": "Anti-996 License",
   "preferUnplugged": true,
@@ -12,7 +12,7 @@
     "node": ">=12"
   },
   "files": [
-    "virtual-node-env"
+    "nodapt"
   ],
   "os": [
     "linux"
