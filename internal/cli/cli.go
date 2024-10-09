@@ -24,5 +24,5 @@ func init() {
 		panic(err)
 	}
 
-	virtual_node_env_dir = filepath.Join(homeDir, ".virtual-node-env")
+	virtual_node_env_dir = filepath.Join(homeDir, ".nodapt")
 }

@@ -5,22 +5,20 @@ const path = require("path");
 const platform = os.platform();
 const arch = os.arch();
 
-const ERR_NOT_SUPPORT = new Error(
-  "virtual-node-env does not support your platform"
-);
+const ERR_NOT_SUPPORT = new Error("nodapt does not support your platform");
 
 const platformMap = {
   win32: {
-    arm64: "virtual-node-env-windows-arm64",
-    x64: "virtual-node-env-windows-amd64",
+    arm64: "nodapt-windows-arm64",
+    x64: "nodapt-windows-amd64",
   },
   darwin: {
-    arm64: "virtual-node-env-darwin-arm64",
-    x64: "virtual-node-env-darwin-amd64",
+    arm64: "nodapt-darwin-arm64",
+    x64: "nodapt-darwin-amd64",
   },
   linux: {
-    arm64: "virtual-node-env-linux-arm64",
-    x64: "virtual-node-env-linux-amd64",
+    arm64: "nodapt-linux-arm64",
+    x64: "nodapt-linux-amd64",
   },
 };
 
@@ -44,8 +42,7 @@ const binaryPackageDir = (() => {
   }
 })();
 
-const executableFileName =
-  "virtual-node-env" + (platform === "win32" ? ".exe" : "");
+const executableFileName = "nodapt" + (platform === "win32" ? ".exe" : "");
 
 const executableFilePath = path.join(binaryPackageDir, executableFileName);
 

@@ -1,7 +1,7 @@
 version: 2
 builds:
-  - binary: virtual-node-env
-    main: ./cmd/virtual-node-env/main.go
+  - binary: nodapt
+    main: ./cmd/nodapt/main.go
     goos:
       - windows
       - darwin
