@@ -12,9 +12,7 @@
     "url": "git+https://github.com/axetroy/nodapt.git"
   },
   "bin": {
-    "nodapt": "bin/nodapt",
-    "virtual-node-env": "bin/nodapt",
-    "vnode": "bin/nodapt"
+    "nodapt": "bin/nodapt"
   },
   "files": [
     "bin/nodapt",
