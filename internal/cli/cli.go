@@ -4,7 +4,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/axetroy/virtual_node_env/internal/util"
+	"github.com/axetroy/nodapt/internal/util"
 )
 
 var virtual_node_env_dir string

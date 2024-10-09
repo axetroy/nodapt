@@ -6,7 +6,7 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/axetroy/virtual_node_env/internal/version_constraint"
+	"github.com/axetroy/nodapt/internal/version_constraint"
 	"github.com/pkg/errors"
 )
 

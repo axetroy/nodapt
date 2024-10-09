@@ -6,9 +6,9 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/axetroy/virtual_node_env/internal/cli"
-	"github.com/axetroy/virtual_node_env/internal/node"
-	"github.com/axetroy/virtual_node_env/internal/util"
+	"github.com/axetroy/nodapt/internal/cli"
+	"github.com/axetroy/nodapt/internal/node"
+	"github.com/axetroy/nodapt/internal/util"
 	"github.com/pkg/errors"
 )
 

@@ -8,9 +8,9 @@ import (
 	"runtime"
 	"sort"
 
-	"github.com/axetroy/virtual_node_env/internal/node"
-	"github.com/axetroy/virtual_node_env/internal/util"
-	"github.com/axetroy/virtual_node_env/internal/version_constraint"
+	"github.com/axetroy/nodapt/internal/node"
+	"github.com/axetroy/nodapt/internal/util"
+	"github.com/axetroy/nodapt/internal/version_constraint"
 	"github.com/pkg/errors"
 )
 
