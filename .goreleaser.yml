@@ -1,4 +1,5 @@
 version: 2
+project_name: nodapt
 builds:
   - binary: nodapt
     main: ./cmd/nodapt/main.go
