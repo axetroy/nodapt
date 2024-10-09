@@ -1,0 +1,37 @@
+{
+  "name": "@axetroy/nodapt",
+  "version": "0.1.0",
+  "description": "A virtual node environment for node.js",
+  "main": "lib/index.js",
+  "author": "Axetroy <axetroy.dev@gmail.com>",
+  "license": "Anti-996",
+  "private": false,
+  "homepage": "https://github.com/axetroy/nodapt",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/axetroy/nodapt.git"
+  },
+  "bin": {
+    "nodapt": "bin/nodapt"
+  },
+  "files": [
+    "bin/nodapt",
+    "lib/index.js",
+    "lib/index.d.ts",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "virtual",
+    "node",
+    "env"
+  ],
+  "optionalDependencies": {
+    "@axetroy/nodapt-darwin-amd64": "0.1.0",
+    "@axetroy/nodapt-darwin-arm64": "0.1.0",
+    "@axetroy/nodapt-linux-arm64": "0.1.0",
+    "@axetroy/nodapt-linux-amd64": "0.1.0",
+    "@axetroy/nodapt-windows-arm64": "0.1.0",
+    "@axetroy/nodapt-windows-amd64": "0.1.0"
+  }
+}

@@ -1,7 +1,7 @@
 package node
 
 import (
-	"github.com/axetroy/virtual_node_env/internal/util"
+	"github.com/axetroy/nodapt/internal/util"
 )
 
 var NODE_MIRROR string = getNodeMirror("https://nodejs.org/dist/")

@@ -6,9 +6,9 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/axetroy/virtual_node_env/internal/cli"
-	"github.com/axetroy/virtual_node_env/internal/node"
-	"github.com/axetroy/virtual_node_env/internal/util"
+	"github.com/axetroy/nodapt/internal/cli"
+	"github.com/axetroy/nodapt/internal/node"
+	"github.com/axetroy/nodapt/internal/util"
 	"github.com/pkg/errors"
 )
 
@@ -19,22 +19,22 @@ var (
 )
 
 func printHelp() {
-	fmt.Println(`virtual-node-env - A virtual node environment for node.js, node version manager for projects.
+	fmt.Println(`nodapt - A virtual node environment for node.js, node version manager for projects.
 
 USAGE:
-  virtual-node-env [OPTIONS] <ARGS...>
-  virtual-node-env [OPTIONS] run <ARGS...>
-  virtual-node-env [OPTIONS] use <CONSTRAINT> <ARGS...>
-  virtual-node-env [OPTIONS] rm <CONSTRAINT> <ARGS...>
-  virtual-node-env [OPTIONS] clean
-  virtual-node-env [OPTIONS] ls
-  virtual-node-env [OPTIONS] ls-remote
+  nodapt [OPTIONS] <ARGS...>
+  nodapt [OPTIONS] run <ARGS...>
+  nodapt [OPTIONS] use <CONSTRAINT> <ARGS...>
+  nodapt [OPTIONS] rm <CONSTRAINT> <ARGS...>
+  nodapt [OPTIONS] clean
+  nodapt [OPTIONS] ls
+  nodapt [OPTIONS] ls-remote
 
 COMMANDS:
   run <ARGS...>               Automatically select node version to run commands
   use <CONSTRAINT> <ARGS...>  Use the specified version of node to run the command
-  rm|remove <CONSTRAINT>      Remove the specified version of node that installed by virtual-node-env
-  clean                       Remove all the node version that installed by virtual-node-env
+  rm|remove <CONSTRAINT>      Remove the specified version of node that installed by nodapt
+  clean                       Remove all the node version that installed by nodapt
   ls|list                     List all the installed node version
   ls-remote|list-remote       List all the available node version
   <ARGS...>                   Alias for 'run <ARGS...>' but shorter
@@ -46,16 +46,16 @@ OPTIONS:
 ENVIRONMENT VARIABLES:
   NODE_MIRROR                 The mirror of the nodejs download, defaults to: https://nodejs.org/dist/
                               Chinese users defaults to: https://registry.npmmirror.com/-/binary/node/
-  NODE_ENV_DIR                The directory where the nodejs is stored, defaults to: $HOME/.virtual-node-env
+  NODE_ENV_DIR                The directory where the nodejs is stored, defaults to: $HOME/.nodapt
   DEBUG                       Print debug information when set DEBUG=1
 
 EXAMPLES:
-  virtual-node-env node -v
-  virtual-node-env run node -v
-  virtual-node-env use v14.17.0 node -v
+  nodapt node -v
+  nodapt run node -v
+  nodapt use v14.17.0 node -v
 
 SOURCE CODE:
-  https://github.com/axetroy/virtual-node-env`)
+  https://github.com/axetroy/nodapt`)
 }
 
 type Flag struct {

@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"github.com/Masterminds/semver"
-	"github.com/axetroy/virtual_node_env/internal/node"
+	"github.com/axetroy/nodapt/internal/node"
 	"github.com/pkg/errors"
 )
 

@@ -4,7 +4,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/axetroy/virtual_node_env/internal/util"
+	"github.com/axetroy/nodapt/internal/util"
 	"github.com/pkg/errors"
 )
 

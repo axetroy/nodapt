@@ -6,9 +6,9 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/axetroy/virtual_node_env/internal/downloader"
-	"github.com/axetroy/virtual_node_env/internal/extractor"
-	"github.com/axetroy/virtual_node_env/internal/util"
+	"github.com/axetroy/nodapt/internal/downloader"
+	"github.com/axetroy/nodapt/internal/extractor"
+	"github.com/axetroy/nodapt/internal/util"
 	"github.com/pkg/errors"
 )
 

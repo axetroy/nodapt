@@ -1,10 +1,10 @@
 [English](README.md) | 中文简体
 
-[![Build Status](https://github.com/axetroy/virtual-node-env/workflows/ci/badge.svg)](https://github.com/axetroy/virtual-node-env/actions)
-[![Go Report Card](https://goreportcard.com/badge/github.com/axetroy/virtual-node-env)](https://goreportcard.com/report/github.com/axetroy/virtual-node-env)
-![Latest Version](https://img.shields.io/github/v/release/axetroy/virtual-node-env.svg)
+[![Build Status](https://github.com/axetroy/nodapt/workflows/ci/badge.svg)](https://github.com/axetroy/nodapt/actions)
+[![Go Report Card](https://goreportcard.com/badge/github.com/axetroy/nodapt)](https://goreportcard.com/report/github.com/axetroy/nodapt)
+![Latest Version](https://img.shields.io/github/v/release/axetroy/nodapt.svg)
 [![996.icu](https://img.shields.io/badge/link-996.icu-red.svg)](https://996.icu)
-![Repo Size](https://img.shields.io/github/repo-size/axetroy/virtual-node-env.svg)
+![Repo Size](https://img.shields.io/github/repo-size/axetroy/nodapt.svg)
 
 ### 背景
 
@@ -24,10 +24,10 @@
 
 ```bash
 # 自动选择 NodeJS 版本运行命令
-$ virtual-node-env node -v
+$ nodapt node -v
 
 # 指定 NodeJS 版本并运行指定命令
-$ virtual-node-env use ^18 node -v
+$ nodapt use ^18 node -v
 ```
 
 ### 集成到你的 NodeJS 项目中
@@ -43,33 +43,33 @@ $ virtual-node-env use ^18 node -v
   }
 ```
 
-2. 使用 `virtual-node-env` 命令运行脚本。
+2. 使用 `nodapt` 命令运行脚本。
 
 ```diff
 - yarn dev
-+ virtual-node-env yarn dev
++ nodapt yarn dev
 ```
 
 运行 `--help` 查看更多选项。
 
 ```
-$ virtual-node-env --help
-virtual-node-env - A virtual node environment for node.js, node version manager for projects.
+$ nodapt --help
+nodapt - A virtual node environment for node.js, node version manager for projects.
 
 USAGE:
-  virtual-node-env [OPTIONS] <ARGS...>
-  virtual-node-env [OPTIONS] run <ARGS...>
-  virtual-node-env [OPTIONS] use <CONSTRAINT> <ARGS...>
-  virtual-node-env [OPTIONS] rm <CONSTRAINT> <ARGS...>
-  virtual-node-env [OPTIONS] clean
-  virtual-node-env [OPTIONS] ls
-  virtual-node-env [OPTIONS] ls-remote
+  nodapt [OPTIONS] <ARGS...>
+  nodapt [OPTIONS] run <ARGS...>
+  nodapt [OPTIONS] use <CONSTRAINT> <ARGS...>
+  nodapt [OPTIONS] rm <CONSTRAINT> <ARGS...>
+  nodapt [OPTIONS] clean
+  nodapt [OPTIONS] ls
+  nodapt [OPTIONS] ls-remote
 
 COMMANDS:
   run <ARGS...>               Automatically select node version to run commands
   use <CONSTRAINT> <ARGS...>  Use the specified version of node to run the command
-  rm|remove <CONSTRAINT>      Remove the specified version of node that installed by virtual-node-env
-  clean                       Remove all the node version that installed by virtual-node-env
+  rm|remove <CONSTRAINT>      Remove the specified version of node that installed by nodapt
+  clean                       Remove all the node version that installed by nodapt
   ls|list                     List all the installed node version
   ls-remote|list-remote       List all the available node version
   <ARGS...>                   Alias for 'run <ARGS...>' but shorter
@@ -81,16 +81,16 @@ OPTIONS:
 ENVIRONMENT VARIABLES:
   NODE_MIRROR                 The mirror of the nodejs download, defaults to: https://nodejs.org/dist/
                               Chinese users defaults to: https://registry.npmmirror.com/-/binary/node/
-  NODE_ENV_DIR                The directory where the nodejs is stored, defaults to: $HOME/.virtual-node-env
+  NODE_ENV_DIR                The directory where the nodejs is stored, defaults to: $HOME/.nodapt
   DEBUG                       Print debug information when set DEBUG=1
 
 EXAMPLES:
-  virtual-node-env node -v
-  virtual-node-env run node -v
-  virtual-node-env use v14.17.0 node -v
+  nodapt node -v
+  nodapt run node -v
+  nodapt use v14.17.0 node -v
 
 SOURCE CODE:
-  https://github.com/axetroy/virtual-node-env
+  https://github.com/axetroy/nodapt
 ```
 
 ### 安装
@@ -98,29 +98,27 @@ SOURCE CODE:
 1. 通过 [Cask](https://github.com/cask-pkg/cask.rs) 安装 (Mac/Linux/Windows)
 
 ```bash
-$ cask install github.com/axetroy/virtual-node-env
-$ virtual-node-env --help
+$ cask install github.com/axetroy/nodapt
+$ nodapt --help
 ```
 
 2. 通过 npm 安装
 
 ```sh
-$ npm install @axetroy/virtual-node-env -g
-$ virtual-node-env --help
-# 或者使用别名 vnode
-$ vnode --help
+$ npm install @axetroy/nodapt -g
+$ nodapt --help
 ```
 
 ### 卸载
 
 ```bash
-$ virtual-node-env clean
+$ nodapt clean
 # 然后移除可执行文件或者通过包管理器卸载
 ```
 
 ### NodeJS 版本选择算法
 
-本节解释运行 `virtual-node-env` 时发生的情况以及它如何选择节点版本。
+本节解释运行 `nodapt` 时发生的情况以及它如何选择节点版本。
 
 1. 检查 `package.json` 是否存在。
 2. 如果 `package.json` 存在：

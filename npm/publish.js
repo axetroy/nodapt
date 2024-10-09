@@ -10,8 +10,8 @@ const spawn = require("child_process").spawn;
 
 const packages = fs
   .readdirSync(__dirname)
-  .filter((v) => v.startsWith("virtual-node-env-"))
-  .concat(["virtual-node-env"]);
+  .filter((v) => v.startsWith("nodapt-"))
+  .concat(["nodapt"]);
 
 async function main() {
   for (const pkg of packages) {

@@ -39,7 +39,7 @@ jobs:
 
   release:
     name: Release to Github
-    if: startsWith(github.ref, 'refs/tags/') && github.repository == 'axetroy/virtual-node-env'
+    if: startsWith(github.ref, 'refs/tags/') && github.repository == 'axetroy/nodapt'
     needs: [ci]
     runs-on: macOS-latest
     steps:
@@ -86,10 +86,10 @@ jobs:
 
       - name: Sync CNPM
         run: |
-          curl -X PUT https://registry-direct.npmmirror.com/-/package/@axetroy/virtual-node-env/syncs
-          curl -X PUT https://registry-direct.npmmirror.com/-/package/@axetroy/virtual-node-env-darwin-amd64/syncs
-          curl -X PUT https://registry-direct.npmmirror.com/-/package/@axetroy/virtual-node-env-darwin-arm64/syncs
-          curl -X PUT https://registry-direct.npmmirror.com/-/package/@axetroy/virtual-node-env-linux-amd64/syncs
-          curl -X PUT https://registry-direct.npmmirror.com/-/package/@axetroy/virtual-node-env-linux-arm64/syncs
-          curl -X PUT https://registry-direct.npmmirror.com/-/package/@axetroy/virtual-node-env-windows-amd64/syncs
-          curl -X PUT https://registry-direct.npmmirror.com/-/package/@axetroy/virtual-node-env-windows-arm64/syncs
+          curl -X PUT https://registry-direct.npmmirror.com/-/package/@axetroy/nodapt/syncs
+          curl -X PUT https://registry-direct.npmmirror.com/-/package/@axetroy/nodapt-darwin-amd64/syncs
+          curl -X PUT https://registry-direct.npmmirror.com/-/package/@axetroy/nodapt-darwin-arm64/syncs
+          curl -X PUT https://registry-direct.npmmirror.com/-/package/@axetroy/nodapt-linux-amd64/syncs
+          curl -X PUT https://registry-direct.npmmirror.com/-/package/@axetroy/nodapt-linux-arm64/syncs
+          curl -X PUT https://registry-direct.npmmirror.com/-/package/@axetroy/nodapt-windows-amd64/syncs
+          curl -X PUT https://registry-direct.npmmirror.com/-/package/@axetroy/nodapt-windows-arm64/syncs

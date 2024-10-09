@@ -1,4 +1,4 @@
-module github.com/axetroy/virtual_node_env
+module github.com/axetroy/nodapt
 
 go 1.23
 

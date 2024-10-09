@@ -7,7 +7,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/axetroy/virtual_node_env/internal/util"
+	"github.com/axetroy/nodapt/internal/util"
 	pb "github.com/cheggaaa/pb/v3"
 	"github.com/pkg/errors"
 )

@@ -15,8 +15,8 @@ console.log(`prepare publish to npm for: ${version}`);
 
 const packages = fs
   .readdirSync(__dirname)
-  .filter((v) => v.startsWith("virtual-node-env-"))
-  .concat(["virtual-node-env"]);
+  .filter((v) => v.startsWith("nodapt-"))
+  .concat(["nodapt"]);
 
 for (const pkgName of packages) {
   const pkgPath = path.join(__dirname, pkgName, "package.json");
@@ -27,7 +27,7 @@ for (const pkgName of packages) {
 
   if (pkg.optionalDependencies) {
     for (const subDeps in pkg.optionalDependencies) {
-      if (subDeps.startsWith("@axetroy/virtual-node-env-")) {
+      if (subDeps.startsWith("@axetroy/nodapt-")) {
         pkg.optionalDependencies[subDeps] = version;
       }
     }
@@ -35,14 +35,14 @@ for (const pkgName of packages) {
 
   fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2));
 
-  if (pkgName.startsWith("virtual-node-env-")) {
+  if (pkgName.startsWith("nodapt-")) {
     const fileMap = {
-      "virtual-node-env-darwin-arm64": "virtual-node-env_darwin_arm64",
-      "virtual-node-env-darwin-amd64": "virtual-node-env_darwin_amd64_v1",
-      "virtual-node-env-linux-amd64": "virtual-node-env_linux_amd64_v1",
-      "virtual-node-env-linux-arm64": "virtual-node-env_linux_arm64",
-      "virtual-node-env-windows-amd64": "virtual-node-env_windows_amd64_v1",
-      "virtual-node-env-windows-arm64": "virtual-node-env_windows_arm64",
+      "nodapt-darwin-arm64": "nodapt_darwin_arm64",
+      "nodapt-darwin-amd64": "nodapt_darwin_amd64_v1",
+      "nodapt-linux-amd64": "nodapt_linux_amd64_v1",
+      "nodapt-linux-arm64": "nodapt_linux_arm64",
+      "nodapt-windows-amd64": "nodapt_windows_amd64_v1",
+      "nodapt-windows-arm64": "nodapt_windows_arm64",
     };
 
     if (pkgName in fileMap === false)
@@ -51,7 +51,7 @@ for (const pkgName of packages) {
     const destFolder = fileMap[pkgName];
 
     const executableFileName =
-      "virtual-node-env" + (pkgName.indexOf("windows") > -1 ? ".exe" : "");
+      "nodapt" + (pkgName.indexOf("windows") > -1 ? ".exe" : "");
 
     const executableFilePath = path.join(
       __dirname,

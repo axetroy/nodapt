@@ -7,9 +7,9 @@ import (
 	"path/filepath"
 	"runtime"
 
-	"github.com/axetroy/virtual_node_env/internal/node"
-	"github.com/axetroy/virtual_node_env/internal/shell"
-	"github.com/axetroy/virtual_node_env/internal/util"
+	"github.com/axetroy/nodapt/internal/node"
+	"github.com/axetroy/nodapt/internal/shell"
+	"github.com/axetroy/nodapt/internal/util"
 	"github.com/pkg/errors"
 )
 
