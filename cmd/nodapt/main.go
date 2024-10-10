@@ -6,7 +6,7 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/axetroy/nodapt/internal/cli"
+	"github.com/axetroy/nodapt/internal/command"
 	"github.com/axetroy/nodapt/internal/node"
 	"github.com/axetroy/nodapt/internal/util"
 	"github.com/pkg/errors"
@@ -143,10 +143,10 @@ func run() error {
 		commands := f.Cmd[2:]
 
 		if len(commands) == 0 {
-			return cli.Use(constraint)
+			return command.Use(constraint)
 		} else {
 
-			return cli.RunWithConstraint(constraint, commands)
+			return command.RunWithConstraint(constraint, commands)
 		}
 	case "rm", "remove":
 		if len(f.Cmd) == 1 {
@@ -155,14 +155,14 @@ func run() error {
 
 		constraint := f.Cmd[1]
 
-		return cli.Remove(constraint)
+		return command.Remove(constraint)
 
 	case "ls", "list":
-		return cli.List()
+		return command.List()
 	case "ls-remote", "list-remote":
-		return cli.ListRemote()
+		return command.ListRemote()
 	case "clean":
-		return cli.Clean()
+		return command.Clean()
 	case "run":
 		f.Cmd = f.Cmd[1:]
 		fallthrough
@@ -185,14 +185,14 @@ func run() error {
 
 			if constraint != nil {
 				util.Debug("Use node constraint: %s\n", *constraint)
-				return cli.RunWithConstraint(*constraint, f.Cmd)
+				return command.RunWithConstraint(*constraint, f.Cmd)
 			} else {
 				util.Debug("Run command directly\n")
-				return cli.RunDirectly(f.Cmd)
+				return command.RunDirectly(f.Cmd)
 			}
 		} else {
 			util.Debug("Run command directly\n")
-			return cli.RunDirectly(f.Cmd)
+			return command.RunDirectly(f.Cmd)
 		}
 	}
 }
