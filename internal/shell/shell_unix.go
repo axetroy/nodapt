@@ -11,20 +11,6 @@ import (
 	"github.com/pkg/errors"
 )
 
-func getFishShell() *string {
-	cmd := exec.Command("status", "fish-path")
-
-	out, err := cmd.Output()
-
-	if err != nil {
-		return nil
-	}
-
-	shell := strings.TrimSpace(string(out))
-
-	return &shell
-}
-
 func getShellFromEnv() *string {
 	shell := os.Getenv("SHELL")
 
@@ -48,10 +34,6 @@ func getShellFromProcess() (string, error) {
 }
 
 func GetPath() (string, error) {
-	if shell := getFishShell(); shell != nil {
-		return *shell, nil
-	}
-
 	if shell := getShellFromEnv(); shell != nil {
 		return *shell, nil
 	}
