@@ -6,6 +6,10 @@
 [![996.icu](https://img.shields.io/badge/link-996.icu-red.svg)](https://996.icu)
 ![Repo Size](https://img.shields.io/github/repo-size/axetroy/nodapt.svg)
 
+### 介绍
+
+Nodapt (/noʊˈdæpt/) 是一个适配多个 NodeJS 版本的命令行工具，它会根据 `packages.json` 中的 NodeJS 版本约束，使用合适的 NodeJS 版本运行命令。
+
 ### 背景
 
 在开发 NodeJS 项目时，我们经常需要切换 NodeJS 版本，例如，项目 A 需要`16.x.y`，而项目 B 使用`20.x.y`。

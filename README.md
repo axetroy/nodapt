@@ -6,6 +6,10 @@ English | [中文简体](README_zh-CN.md)
 [![996.icu](https://img.shields.io/badge/link-996.icu-red.svg)](https://996.icu)
 ![Repo Size](https://img.shields.io/github/repo-size/axetroy/nodapt.svg)
 
+### Introduction
+
+Nodapt (/noʊˈdæpt/) is a command-line tool that adapts to multiple NodeJS versions. It will run commands with the appropriate NodeJS version based on the NodeJS version constraints in `packages.json`.
+
 ### Background
 
 When developing NodeJS projects, we often need to switch NodeJS versions. For example, project A requires `16.x.y`, while project B uses `20.x.y`.
