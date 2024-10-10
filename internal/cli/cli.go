@@ -7,14 +7,14 @@ import (
 	"github.com/axetroy/nodapt/internal/util"
 )
 
-var virtual_node_env_dir string
+var nodapt_dir string
 
 func init() {
 
-	virtualNodeEnvDirFromEnv := util.GetEnvsWithFallback("", "NODE_ENV_DIR")
+	nodaptDirFromEnv := util.GetEnvsWithFallback("", "NODE_ENV_DIR")
 
-	if virtualNodeEnvDirFromEnv != "" {
-		virtual_node_env_dir = virtualNodeEnvDirFromEnv
+	if nodaptDirFromEnv != "" {
+		nodapt_dir = nodaptDirFromEnv
 		return
 	}
 
@@ -24,5 +24,5 @@ func init() {
 		panic(err)
 	}
 
-	virtual_node_env_dir = filepath.Join(homeDir, ".nodapt")
+	nodapt_dir = filepath.Join(homeDir, ".nodapt")
 }

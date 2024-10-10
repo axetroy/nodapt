@@ -10,7 +10,7 @@ import (
 )
 
 func Remove(constraint string) error {
-	cachedNodes, err := node.GetCachedVersions(virtual_node_env_dir)
+	cachedNodes, err := node.GetCachedVersions(nodapt_dir)
 
 	if err != nil {
 		return errors.WithStack(err)

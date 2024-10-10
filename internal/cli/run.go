@@ -39,7 +39,7 @@ func run(options *RunOptions) error {
 
 	util.Debug("Run command: %s with node %s.\n", options.Cmd, options.Version)
 
-	nodeEnvPath, err := node.Download(options.Version, virtual_node_env_dir)
+	nodeEnvPath, err := node.Download(options.Version, nodapt_dir)
 
 	if err != nil {
 		return errors.WithStack(err)
@@ -116,7 +116,7 @@ func RunWithConstraint(constraint string, command []string) error {
 	}
 
 	// Found cached node version
-	if cachedNodes, err := node.GetCachedVersions(virtual_node_env_dir); err != nil {
+	if cachedNodes, err := node.GetCachedVersions(nodapt_dir); err != nil {
 		return errors.WithStack(err)
 	} else {
 		// Sort versions in descending order

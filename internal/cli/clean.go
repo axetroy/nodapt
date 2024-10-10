@@ -8,7 +8,7 @@ import (
 )
 
 func Clean() error {
-	if err := os.RemoveAll(virtual_node_env_dir); err != nil {
+	if err := os.RemoveAll(nodapt_dir); err != nil {
 		return errors.WithStack(err)
 	}
 

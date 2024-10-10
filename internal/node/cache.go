@@ -41,10 +41,10 @@ func (a ByVersion) Swap(i, j int) {
 	a[i], a[j] = a[j], a[i]
 }
 
-func GetCachedVersions(virtualNodeEnvDir string) ([]CachedNode, error) {
+func GetCachedVersions(nodaptDir string) ([]CachedNode, error) {
 	list := make([]CachedNode, 0)
 
-	nodeDir := filepath.Join(virtualNodeEnvDir, "node")
+	nodeDir := filepath.Join(nodaptDir, "node")
 
 	if stat, err := os.Stat(nodeDir); err != nil {
 		if os.IsNotExist(err) {

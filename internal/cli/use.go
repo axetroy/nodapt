@@ -34,7 +34,7 @@ func Use(constraint string) error {
 
 	util.Debug("Current shell: %s\n", shell)
 
-	nodePath, err := node.Download(*version, virtual_node_env_dir)
+	nodePath, err := node.Download(*version, nodapt_dir)
 
 	if err != nil {
 		return errors.WithStack(err)
