@@ -63,20 +63,20 @@ nodapt - A virtual node environment for node.js, node version manager for projec
 USAGE:
   nodapt [OPTIONS] <ARGS...>
   nodapt [OPTIONS] run <ARGS...>
-  nodapt [OPTIONS] use <CONSTRAINT> <ARGS...>
-  nodapt [OPTIONS] rm <CONSTRAINT> <ARGS...>
+  nodapt [OPTIONS] use <CONSTRAINT> [ARGS...]
+  nodapt [OPTIONS] rm <CONSTRAINT>
   nodapt [OPTIONS] clean
   nodapt [OPTIONS] ls
   nodapt [OPTIONS] ls-remote
 
 COMMANDS:
+  <ARGS...>                   Alias for 'run <ARGS...>' but shorter
   run <ARGS...>               Automatically select node version to run commands
   use <CONSTRAINT> <ARGS...>  Use the specified version of node to run the command
   rm|remove <CONSTRAINT>      Remove the specified version of node that installed by nodapt
   clean                       Remove all the node version that installed by nodapt
   ls|list                     List all the installed node version
   ls-remote|list-remote       List all the available node version
-  <ARGS...>                   Alias for 'run <ARGS...>' but shorter
 
 OPTIONS:
   --help|-h                   Print help information
