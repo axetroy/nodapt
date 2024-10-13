@@ -103,11 +103,16 @@ func main() {
 				Action: func(cCtx *cli.Context) error {
 					args := cCtx.Args().Slice()
 
-					if len(args) == 1 {
+					length := len(args)
+
+					switch length {
+					case 0:
+						return command.Use(nil)
+					case 1:
 						constraint := args[0]
 
-						return command.Use(constraint)
-					} else {
+						return command.Use(&constraint)
+					default:
 						constraint := args[0]
 						commands := args[1:]
 

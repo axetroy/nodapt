@@ -12,17 +12,44 @@ import (
 	"github.com/pkg/errors"
 )
 
-func Use(constraint string) error {
-	util.Debug("Use constraint: %s\n", constraint)
+func Use(constraint *string) error {
+	if constraint == nil {
+		cwd, err := os.Getwd()
 
-	version, err := node.GetMatchVersion(constraint)
+		if err != nil {
+			return errors.WithStack(err)
+		}
+
+		packageJSONPath := util.LoopUpFile(cwd, "package.json")
+
+		// If the package.json file is found, then use the node constraint in the package.json to run the command
+		if packageJSONPath != nil {
+			util.Debug("Use node constraint from %s\n", *packageJSONPath)
+
+			c, err := node.GetConstraintFromPackageJSON(*packageJSONPath)
+
+			if err != nil {
+				return errors.WithMessagef(err, "failed to get node constraint from %s", *packageJSONPath)
+			}
+
+			constraint = c
+		}
+	}
+
+	if constraint == nil {
+		return errors.New("constraint is required")
+	}
+
+	util.Debug("Use constraint: %s\n", *constraint)
+
+	version, err := node.GetMatchVersion(*constraint)
 
 	if err != nil {
 		return errors.WithStack(err)
 	}
 
 	if version == nil {
-		return errors.Errorf("Cannot find the version of node which matches the constraint: %s", constraint)
+		return errors.Errorf("Cannot find the version of node which matches the constraint: %s", *constraint)
 	}
 
 	shellPath, err := shell.GetPath()
