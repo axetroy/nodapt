@@ -13,6 +13,8 @@ builds:
     flags:
       - -mod=vendor
       - -trimpath
+    gcflags:
+      - all=-l -B -C
     env:
       - CGO_ENABLED=0
 
