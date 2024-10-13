@@ -13,6 +13,8 @@ builds:
     flags:
       - -mod=vendor
       - -trimpath
+    env:
+      - CGO_ENABLED=0
 
 archives:
   - files:
