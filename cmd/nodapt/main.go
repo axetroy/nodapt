@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 	"io"
-	"log"
 	"os"
+	"os/exec"
 
 	"github.com/axetroy/nodapt/internal/command"
 	"github.com/pkg/errors"
@@ -176,6 +176,22 @@ func main() {
 	}
 
 	if err := app.Run(os.Args); err != nil {
-		log.Fatal(err)
+		if os.Getenv("DEBUG") == "1" {
+			fmt.Fprintf(os.Stderr, "%+v\n", err)
+			fmt.Fprintf(os.Stderr, "current commit hash %s\n", commit)
+		} else {
+			fmt.Fprintf(os.Stderr, "%s\n", err.Error())
+			fmt.Fprintln(os.Stderr, "Print debug information when set DEBUG=1")
+		}
+
+		unwrapError := errors.Unwrap(err)
+
+		if err, ok := err.(*exec.ExitError); ok {
+			os.Exit(err.ExitCode())
+		} else if err, ok := unwrapError.(*exec.ExitError); ok {
+			os.Exit(err.ExitCode())
+		} else {
+			os.Exit(1)
+		}
 	}
 }
