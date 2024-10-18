@@ -164,7 +164,9 @@ func main() {
 				},
 			},
 		},
-		DefaultCommand: "run",
+		Action: func(cCtx *cli.Context) error {
+			return command.Run(cCtx.Args().Slice())
+		},
 	}
 
 	cli.VersionPrinter = func(c *cli.Context) {
