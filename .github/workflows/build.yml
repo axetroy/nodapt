@@ -41,7 +41,7 @@ jobs:
     name: Release to Github
     if: startsWith(github.ref, 'refs/tags/') && github.repository == 'axetroy/nodapt'
     needs: [ci]
-    runs-on: macOS-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
