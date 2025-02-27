@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/exec"
 	"runtime"
+	"slices"
 	"strings"
 )
 
@@ -139,5 +140,25 @@ func IsSimplifiedChinese() bool {
 		}
 	}
 
+	// 获取时区，如果是东八区，则默认为简体中文
+	if isChinaTimezone() {
+		return true
+	}
+
 	return false
+}
+
+// isEast8Zone checks if the current time zone is East 8 Zone (Asia/Shanghai).
+// It returns true if the time zone is "Asia/Shanghai", and false otherwise.
+func isChinaTimezone() bool {
+	timezone, err := getTimezone()
+
+	if err != nil {
+		return false
+	}
+
+	// https://data.iana.org/time-zones/tzdb-2018c/asia
+	chineseZoneSet := []string{"Asia/Shanghai", "Asia/Urumqi", "Asia/Harbin", "Asia/Chongqing", "Asia/Kashgar"}
+
+	return slices.Contains(chineseZoneSet, timezone)
 }
