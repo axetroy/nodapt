@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"path"
 	"slices"
 	"strconv"
 	"strings"
@@ -49,6 +50,8 @@ func getParentProcessInfo(pid int) (int, string, error) {
 		return -1, "", fmt.Errorf("no output from ps")
 	}
 
+	fmt.Printf("%+v\n", lines)
+
 	fields := strings.Fields(lines[1])
 	if len(fields) < 2 {
 		return -1, "", fmt.Errorf("unexpected output format")
@@ -85,7 +88,13 @@ func getShellFromProcess(pid int) (string, error) {
 
 func GetPath() (string, error) {
 	if shell, err := getShellFromProcess(os.Getppid()); err == nil {
-		return shell, nil
+		if path.IsAbs(shell) {
+			return shell, nil
+		} else {
+			if fullShellPath, err := exec.LookPath(shell); err == nil {
+				return fullShellPath, nil
+			}
+		}
 	}
 
 	if shell := getShellFromEnv(); shell != nil {
