@@ -37,12 +37,12 @@ for (const pkgName of packages) {
 
   if (pkgName.startsWith("nodapt-")) {
     const fileMap = {
-      "nodapt-darwin-arm64": "nodapt_darwin_arm64",
+      "nodapt-darwin-arm64": "nodapt_darwin_arm64_v8.0",
       "nodapt-darwin-amd64": "nodapt_darwin_amd64_v1",
       "nodapt-linux-amd64": "nodapt_linux_amd64_v1",
-      "nodapt-linux-arm64": "nodapt_linux_arm64",
+      "nodapt-linux-arm64": "nodapt_linux_arm64_v8.0",
       "nodapt-windows-amd64": "nodapt_windows_amd64_v1",
-      "nodapt-windows-arm64": "nodapt_windows_arm64",
+      "nodapt-windows-arm64": "nodapt_windows_arm64_v8.0",
     };
 
     if (pkgName in fileMap === false)
