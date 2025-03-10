@@ -47,14 +47,12 @@ func getParentProcessInfo(pid int) (int, string, error) {
 
 	lines := strings.Split(out.String(), "\n")
 	if len(lines) < 2 {
-		return -1, "", fmt.Errorf("no output from ps")
+		return -1, "", errors.New("no output from ps")
 	}
-
-	fmt.Printf("%+v\n", lines)
 
 	fields := strings.Fields(lines[1])
 	if len(fields) < 2 {
-		return -1, "", fmt.Errorf("unexpected output format")
+		return -1, "", errors.New("unexpected output format")
 	}
 
 	ppid := fields[0]
