@@ -1,5 +1,5 @@
 {
-  "name": "@axetroy/nodapt",
+  "name": "nodapt",
   "version": "0.1.0",
   "description": "A virtual node environment for node.js",
   "main": "lib/index.js",
