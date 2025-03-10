@@ -86,7 +86,7 @@ jobs:
 
       - name: Sync CNPM
         run: |
-          curl -X PUT https://registry-direct.npmmirror.com/-/package/@axetroy/nodapt/syncs
+          curl -X PUT https://registry-direct.npmmirror.com/-/package/nodapt/syncs
           curl -X PUT https://registry-direct.npmmirror.com/-/package/@axetroy/nodapt-darwin-amd64/syncs
           curl -X PUT https://registry-direct.npmmirror.com/-/package/@axetroy/nodapt-darwin-arm64/syncs
           curl -X PUT https://registry-direct.npmmirror.com/-/package/@axetroy/nodapt-linux-amd64/syncs
