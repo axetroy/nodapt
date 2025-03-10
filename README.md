@@ -24,6 +24,12 @@ So I developed this tool to solve this problem.
 
 It will run the command with the appropriate NodeJS version according to the NodeJS version constraint in `packages.json`.
 
+### Features
+
+- [x] Cross-platform support (Mac/Linux/Windows)
+- [x] Automatically select and install the NodeJS version to run the command
+- [x] Specify the NodeJS version to run the command
+
 ### Usage
 
 ```bash

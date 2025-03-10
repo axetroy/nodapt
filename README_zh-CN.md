@@ -24,6 +24,12 @@ Nodapt (/noʊˈdæpt/) 是一个适配多个 NodeJS 版本的命令行工具，�
 
 它会根据 `packages.json` 中的 NodeJS 版本约束，使用合适的 NodeJS 版本运行命令。
 
+### 特性
+
+- [x] 跨平台支持 (Mac/Linux/Windows)
+- [x] 自动选择并安装 NodeJS 版本运行命令
+- [x] 指定 NodeJS 版本运行命令
+
 ### 用法
 
 ```bash
