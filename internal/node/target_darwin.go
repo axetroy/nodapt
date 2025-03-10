@@ -3,6 +3,8 @@ package node
 import (
 	"fmt"
 	"runtime"
+
+	"github.com/Masterminds/semver"
 )
 
 func GetRemoteArtifactTarget(version string) *RemoteArtifactTarget {
@@ -27,6 +29,13 @@ func getNodeFileName(version string) *string {
 
 		return &str
 	} else if runtime.GOARCH == "arm64" {
+		// Node.js 16.0.0 and later versions have official support for Apple Silicon
+		// https://nodejs.org/en/blog/release/v16.0.0/
+		if c, err := semver.NewConstraint("< 16.0.0"); err == nil && c.Check(semver.MustParse(version)) {
+			str := fmt.Sprintf("node-v%s-darwin-x64", version)
+			return &str
+		}
+
 		str := fmt.Sprintf("node-v%s-darwin-arm64", version)
 
 		return &str
