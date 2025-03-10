@@ -109,7 +109,7 @@ $ nodapt --help
 2. Install via npm
 
 ```sh
-$ npm install @axetroy/nodapt -g
+$ npm install nodapt -g
 $ nodapt --help
 ```
 
