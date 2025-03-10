@@ -187,14 +187,32 @@ func RunDirectly(cmd []string) error {
 }
 
 func Run(cmd []string) error {
-	if len(cmd) == 0 {
-		return errors.New("commands is required")
-	}
-
 	cwd, err := os.Getwd()
 
 	if err != nil {
 		return errors.WithStack(err)
+	}
+
+	if len(cmd) == 0 {
+		packageJSONPath := util.LoopUpFile(cwd, "package.json")
+
+		if packageJSONPath != nil {
+			util.Debug("Use node constraint from %s\n", *packageJSONPath)
+
+			constraint, err := node.GetConstraintFromPackageJSON(*packageJSONPath)
+
+			if err != nil {
+				return err
+			}
+
+			if constraint != nil {
+				util.Debug("Use node constraint: %s\n", *constraint)
+				return Use(constraint)
+			}
+
+		} else {
+			return errors.New("commands is required")
+		}
 	}
 
 	packageJSONPath := util.LoopUpFile(cwd, "package.json")
