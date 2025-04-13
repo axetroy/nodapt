@@ -1,6 +1,7 @@
 package command
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -79,7 +80,7 @@ func Use(constraint *string) error {
 
 	if err := crosspty.Start(shellPath, map[string]string{
 		"PATH": os.Getenv("PATH"),
-	}); err != nil {
+	}, fmt.Sprintf("Welcome to the nodapt shell, Currently using node %s!", *version)); err != nil {
 		return errors.WithStack(err)
 	}
 
