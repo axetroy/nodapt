@@ -8,10 +8,7 @@ import (
 	"github.com/aymanbagabas/go-pty"
 )
 
-func notifySizeChanges(chan os.Signal) {}
-
-func handlePtySize(p pty.Pty, _ chan os.Signal) {
-	// TODO
+func listenOnResize(ch chan os.Signal, p pty.Pty, onResize func(p pty.Pty) error) {
+	// Windows does not support resizing pty, so we do nothing here.
+	// This is a no-op function to satisfy the interface.
 }
-
-func initSizeChange(chan os.Signal) {}

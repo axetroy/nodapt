@@ -77,7 +77,9 @@ func Use(constraint *string) error {
 	// 设置新的 PATH 变量
 	os.Setenv("PATH", util.AppendEnvPath(binaryFileDir))
 
-	if err := crosspty.Start(shellPath); err != nil {
+	if err := crosspty.Start(shellPath, map[string]string{
+		"PATH": os.Getenv("PATH"),
+	}); err != nil {
 		return errors.WithStack(err)
 	}
 
