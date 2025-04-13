@@ -13,13 +13,11 @@ import (
 )
 
 func setPytSize(p pty.Pty) error {
-	w, h, err := term.GetSize(int(os.Stdin.Fd()))
-
-	if err != nil {
-		return err
+	if w, h, err := getConsoleSize(p); err == nil {
+		return p.Resize(w, h)
 	}
 
-	return p.Resize(w, h)
+	return nil
 }
 
 func Start(shellPath string, env map[string]string) error {
@@ -35,11 +33,13 @@ func Start(shellPath string, env map[string]string) error {
 		return err
 	}
 
-	_ = setPytSize(ptmx) // Set the initial size of the pty.
+	if err := setPytSize(ptmx); err != nil {
+		return errors.WithMessage(err, "failed to set initial pty size")
+	}
 
 	ch := make(chan os.Signal, 1)
 
-	listenOnResize(ch, ptmx, setPytSize)
+	go listenOnResize(ch, ptmx, setPytSize)
 
 	defer func() { signal.Stop(ch); close(ch) }() // Cleanup signals when done.
 
