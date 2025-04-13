@@ -3,7 +3,7 @@ package version_constraint
 import (
 	"github.com/pkg/errors"
 
-	"github.com/Masterminds/semver"
+	"github.com/Masterminds/semver/v3"
 )
 
 // Match checks if the given version satisfies the specified version constraint.

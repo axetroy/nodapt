@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"os"
@@ -8,7 +9,7 @@ import (
 
 	"github.com/axetroy/nodapt/internal/command"
 	"github.com/pkg/errors"
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli/v3"
 )
 
 var (
@@ -71,37 +72,28 @@ func main() {
 		Usage:   "Print version information",
 	}
 
-	app := &cli.App{
-		Name:                 "nodapt",
-		Usage:                "A virtual node environment for node.js, node version manager for projects.",
-		Version:              version,
-		Suggest:              true,
-		EnableBashCompletion: true,
-		Authors: []*cli.Author{
-			{
-				Name:  "axetroy",
-				Email: "axetroy.dev@gmail.com",
-			},
-		},
+	app := &cli.Command{
+		Name:    "nodapt",
+		Usage:   "A virtual node environment for node.js, node version manager for projects.",
+		Version: version,
+		Suggest: true,
 		Commands: []*cli.Command{
 			{
 				Name:        "run",
 				Usage:       `Automatically select node version to run commands`,
 				Description: `Automatically select node version to run commands`,
-				Args:        true,
 				ArgsUsage:   `<COMMANDS...>`,
-				Action: func(cCtx *cli.Context) error {
-					return command.Run(cCtx.Args().Slice())
+				Action: func(ctx context.Context, cmd *cli.Command) error {
+					return command.Run(cmd.Args().Slice())
 				},
 			},
 			{
 				Name:        "use",
 				Usage:       "Use the specified version of node to run the command",
 				Description: "Use the specified version of node to run the command",
-				Args:        true,
 				ArgsUsage:   `<CONSTRAINT> [COMMANDS...]`,
-				Action: func(cCtx *cli.Context) error {
-					args := cCtx.Args().Slice()
+				Action: func(ctx context.Context, cmd *cli.Command) error {
+					args := cmd.Args().Slice()
 
 					length := len(args)
 
@@ -125,10 +117,9 @@ func main() {
 				Usage:       "Remove the specified version of node that installed by nodapt",
 				Description: "Remove the specified version of node that installed by nodapt",
 				Aliases:     []string{"rm"},
-				Args:        true,
 				ArgsUsage:   `<CONSTRAINT...>`,
-				Action: func(cCtx *cli.Context) error {
-					for _, constraint := range cCtx.Args().Slice() {
+				Action: func(ctx context.Context, cmd *cli.Command) error {
+					for _, constraint := range cmd.Args().Slice() {
 						if err := command.Remove(constraint); err != nil {
 							return errors.WithStack(err)
 						}
@@ -141,7 +132,7 @@ func main() {
 				Name:        "clean",
 				Usage:       "Remove all the node version that installed by nodapt",
 				Description: "Remove all the node version that installed by nodapt",
-				Action: func(cCtx *cli.Context) error {
+				Action: func(ctx context.Context, cmd *cli.Command) error {
 					return command.Clean()
 				},
 			},
@@ -150,7 +141,7 @@ func main() {
 				Usage:       "List all the installed node version",
 				Description: "List all the installed node version",
 				Aliases:     []string{"ls"},
-				Action: func(cCtx *cli.Context) error {
+				Action: func(ctx context.Context, cmd *cli.Command) error {
 					return command.List()
 				},
 			},
@@ -159,17 +150,17 @@ func main() {
 				Usage:       "List all the available node version",
 				Description: "List all the available node version",
 				Aliases:     []string{"ls-remote"},
-				Action: func(cCtx *cli.Context) error {
+				Action: func(ctx context.Context, cmd *cli.Command) error {
 					return command.ListRemote()
 				},
 			},
 		},
-		Action: func(cCtx *cli.Context) error {
-			return command.Run(cCtx.Args().Slice())
+		Action: func(ctx context.Context, cmd *cli.Command) error {
+			return command.Run(cmd.Args().Slice())
 		},
 	}
 
-	cli.VersionPrinter = func(c *cli.Context) {
+	cli.VersionPrinter = func(c *cli.Command) {
 		fmt.Printf("%s %s %s\n", version, commit, date)
 	}
 
@@ -177,7 +168,7 @@ func main() {
 		printHelp()
 	}
 
-	if err := app.Run(os.Args); err != nil {
+	if err := app.Run(context.Background(), os.Args); err != nil {
 		if os.Getenv("DEBUG") == "1" {
 			fmt.Fprintf(os.Stderr, "%+v\n", err)
 			fmt.Fprintf(os.Stderr, "current commit hash %s\n", commit)
