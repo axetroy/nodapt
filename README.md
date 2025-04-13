@@ -1,4 +1,4 @@
-[English](README.md) | 中文简体
+English | [中文简体](README_zh-CN.md)
 
 [![Build Status](https://github.com/axetroy/nodapt/workflows/ci/badge.svg)](https://github.com/axetroy/nodapt/actions)
 [![Go Report Card](https://goreportcard.com/badge/github.com/axetroy/nodapt)](https://goreportcard.com/report/github.com/axetroy/nodapt)
