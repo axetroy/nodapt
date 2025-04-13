@@ -31,7 +31,7 @@ func getNewLine(shellName string) string {
 }
 
 func Start(shellPath string, env map[string]string, welcome string) error {
-	println(welcome)
+	os.Stderr.WriteString(welcome + "\n")
 
 	ptmx, err := pty.New()
 	if err != nil {
