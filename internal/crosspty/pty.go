@@ -62,7 +62,7 @@ func Start(shellPath string, env map[string]string, welcome string) error {
 
 	defer func() { _ = term.Restore(int(os.Stdin.Fd()), oldState) }() // Best effort.
 
-	time.Sleep(1500 * time.Millisecond) // Give the shell some time to start.
+	time.Sleep(1000 * time.Millisecond) // Give the shell some time to start.
 
 	// Copy stdin to the pty and the pty to stdout.
 	// NOTE: The goroutine will keep reading until the next keystroke before returning.
@@ -100,7 +100,7 @@ func Start(shellPath string, env map[string]string, welcome string) error {
 		_, _ = ptmx.Write([]byte("clear" + newLine))
 	}
 
-	// 清空掉 ptmx 的 stdout 缓冲区，使用 channel 并限制最多读取 500 毫秒
+	// 清空掉 ptmx 的 stdout 缓冲区，使用 channel 并限制最多读取 200 毫秒
 	buf := make([]byte, 1024)
 	readCh := make(chan struct{})
 	stopCh := make(chan struct{})
@@ -122,8 +122,8 @@ func Start(shellPath string, env map[string]string, welcome string) error {
 	select {
 	case <-readCh:
 		// Completed reading
-	case <-time.After(500 * time.Millisecond):
-		// Timeout after 500ms, signal to stop reading
+	case <-time.After(200 * time.Millisecond):
+		// Timeout after 200ms, signal to stop reading
 		close(stopCh)
 	}
 
