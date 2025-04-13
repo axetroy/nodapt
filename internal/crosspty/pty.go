@@ -52,17 +52,10 @@ func Start(shellPath string, env map[string]string) error {
 
 	defer func() { _ = term.Restore(int(os.Stdin.Fd()), oldState) }() // Best effort.
 
+	time.Sleep(1500 * time.Millisecond) // Give the shell some time to start.
+
 	// Copy stdin to the pty and the pty to stdout.
 	// NOTE: The goroutine will keep reading until the next keystroke before returning.
-	go func() {
-		_, _ = io.Copy(ptmx, os.Stdin)
-	}()
-	go func() {
-		_, _ = io.Copy(os.Stdout, ptmx)
-	}()
-
-	time.Sleep(500 * time.Millisecond) // Give the shell some time to start.
-
 	shellName := filepath.Base(shellPath)
 
 	// Set environment variables
@@ -94,6 +87,14 @@ func Start(shellPath string, env map[string]string) error {
 	default:
 		_, _ = ptmx.Write([]byte("clear\n"))
 	}
+
+	go func() {
+		_, _ = io.Copy(ptmx, os.Stdin)
+	}()
+
+	go func() {
+		_, _ = io.Copy(os.Stdout, ptmx)
+	}()
 
 	return c.Wait()
 }
