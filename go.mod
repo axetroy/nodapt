@@ -10,7 +10,6 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/stretchr/testify v1.10.0
 	github.com/ulikunitz/xz v0.5.12
-	github.com/urfave/cli/v3 v3.1.1
 	golang.org/x/sys v0.32.0
 	golang.org/x/term v0.31.0
 )

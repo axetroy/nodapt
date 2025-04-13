@@ -1,15 +1,13 @@
 package main
 
 import (
-	"context"
+	"errors"
+	"flag"
 	"fmt"
-	"io"
 	"os"
 	"os/exec"
 
 	"github.com/axetroy/nodapt/internal/command"
-	"github.com/pkg/errors"
-	"github.com/urfave/cli/v3"
 )
 
 var (
@@ -18,13 +16,28 @@ var (
 	date    = "unknown"
 )
 
+func defaultBehaviorHandler(helpFlag, versionFlag bool, commandName string) {
+	if helpFlag {
+		printHelp()
+		return
+	}
+
+	if versionFlag {
+		fmt.Printf("%s %s %s\n", version, commit, date)
+		return
+	}
+
+	fmt.Printf("Unknown command: %s\n", commandName)
+	printHelp()
+}
+
 func printHelp() {
 	fmt.Println(`nodapt - A virtual node environment for node.js, node version manager for projects.
 
 USAGE:
   nodapt [OPTIONS] <ARGS...>
   nodapt [OPTIONS] run <ARGS...>
-  nodapt [OPTIONS] use <CONSTRAINT> [ARGS...]
+  nodapt [OPTIONS] use <CONSTRAINT> [ARGS...>
   nodapt [OPTIONS] rm <CONSTRAINT>
   nodapt [OPTIONS] clean
   nodapt [OPTIONS] ls
@@ -60,134 +73,92 @@ SOURCE CODE:
 }
 
 func main() {
-	cli.HelpFlag = &cli.BoolFlag{
-		Name:    "help",
-		Aliases: []string{"h"},
-		Usage:   "Print help information",
+	// Define global flags
+	helpLongFlag := flag.Bool("help", false, "Print help information")
+	helpShortFlag := flag.Bool("h", false, "Print help information")
+	versionLongFlag := flag.Bool("version", false, "Print version information")
+	versionShortFlag := flag.Bool("v", false, "Print version information")
+
+	flag.Parse()
+
+	showHelp := *helpLongFlag || *helpShortFlag
+	showVersion := *versionLongFlag || *versionShortFlag
+
+	args := flag.Args()
+
+	if len(args) == 0 {
+		defaultBehaviorHandler(showHelp, showVersion, "")
+		return
 	}
 
-	cli.VersionFlag = &cli.BoolFlag{
-		Name:    "version",
-		Aliases: []string{"v"},
-		Usage:   "Print version information",
-	}
-
-	app := &cli.Command{
-		Name:    "nodapt",
-		Usage:   "A virtual node environment for node.js, node version manager for projects.",
-		Version: version,
-		Suggest: true,
-		Commands: []*cli.Command{
-			{
-				Name:        "run",
-				Usage:       `Automatically select node version to run commands`,
-				Description: `Automatically select node version to run commands`,
-				Arguments:   cli.AnyArguments,
-				ArgsUsage:   `<COMMANDS...>`,
-				Action: func(ctx context.Context, cmd *cli.Command) error {
-					return command.Run(cmd.Args().Slice())
-				},
-			},
-			{
-				Name:        "use",
-				Usage:       "Use the specified version of node to run the command",
-				Description: "Use the specified version of node to run the command",
-				Arguments:   cli.AnyArguments,
-				ArgsUsage:   `<CONSTRAINT> [COMMANDS...]`,
-				Action: func(ctx context.Context, cmd *cli.Command) error {
-					args := cmd.Args().Slice()
-
-					length := len(args)
-
-					switch length {
-					case 0:
-						return command.Use(nil)
-					case 1:
-						constraint := args[0]
-
-						return command.Use(&constraint)
-					default:
-						constraint := args[0]
-						commands := args[1:]
-
-						return command.RunWithConstraint(constraint, commands)
-					}
-				},
-			},
-			{
-				Name:        "remove",
-				Usage:       "Remove the specified version of node that installed by nodapt",
-				Description: "Remove the specified version of node that installed by nodapt",
-				Aliases:     []string{"rm"},
-				Arguments:   cli.AnyArguments,
-				ArgsUsage:   `<CONSTRAINT...>`,
-				Action: func(ctx context.Context, cmd *cli.Command) error {
-					for _, constraint := range cmd.Args().Slice() {
-						if err := command.Remove(constraint); err != nil {
-							return errors.WithStack(err)
-						}
-					}
-
-					return nil
-				},
-			},
-			{
-				Name:        "clean",
-				Usage:       "Remove all the node version that installed by nodapt",
-				Description: "Remove all the node version that installed by nodapt",
-				Action: func(ctx context.Context, cmd *cli.Command) error {
-					return command.Clean()
-				},
-			},
-			{
-				Name:        "list",
-				Usage:       "List all the installed node version",
-				Description: "List all the installed node version",
-				Aliases:     []string{"ls"},
-				Action: func(ctx context.Context, cmd *cli.Command) error {
-					return command.List()
-				},
-			},
-			{
-				Name:        "list-remote",
-				Usage:       "List all the available node version",
-				Description: "List all the available node version",
-				Aliases:     []string{"ls-remote"},
-				Action: func(ctx context.Context, cmd *cli.Command) error {
-					return command.ListRemote()
-				},
-			},
-		},
-		Action: func(ctx context.Context, cmd *cli.Command) error {
-			return command.Run(cmd.Args().Slice())
-		},
-	}
-
-	cli.VersionPrinter = func(c *cli.Command) {
-		fmt.Printf("%s %s %s\n", version, commit, date)
-	}
-
-	cli.HelpPrinter = func(w io.Writer, templ string, data any) {
+	commandName := args[0]
+	switch commandName {
+	case "use":
+		if len(args) < 2 {
+			fmt.Println("Error: 'use' command requires a version constraint and optional commands.")
+			return
+		}
+		constraint := args[1]
+		commands := args[2:]
+		if len(commands) == 0 {
+			if err := command.Use(&constraint); err != nil {
+				handleError(err)
+			}
+		} else {
+			if err := command.RunWithConstraint(constraint, commands); err != nil {
+				handleError(err)
+			}
+		}
+	case "remove", "rm":
+		if len(args) < 2 {
+			fmt.Println("Error: 'remove' command requires at least one version constraint.")
+			return
+		}
+		for _, constraint := range args[1:] {
+			if err := command.Remove(constraint); err != nil {
+				handleError(err)
+			}
+		}
+	case "clean":
+		if err := command.Clean(); err != nil {
+			handleError(err)
+		}
+	case "list", "ls":
+		if err := command.List(); err != nil {
+			handleError(err)
+		}
+	case "list-remote", "ls-remote":
+		if err := command.ListRemote(); err != nil {
+			handleError(err)
+		}
+	case "help":
 		printHelp()
-	}
-
-	if err := app.Run(context.Background(), os.Args); err != nil {
-		if os.Getenv("DEBUG") == "1" {
-			fmt.Fprintf(os.Stderr, "%+v\n", err)
-			fmt.Fprintf(os.Stderr, "current commit hash %s\n", commit)
-		} else {
-			fmt.Fprintf(os.Stderr, "%s\n", err.Error())
-			fmt.Fprintln(os.Stderr, "Print debug information when set DEBUG=1")
+	case "run":
+		if err := command.Run(args[1:]); err != nil {
+			handleError(err)
 		}
-
-		unwrapError := errors.Unwrap(err)
-
-		if err, ok := err.(*exec.ExitError); ok {
-			os.Exit(err.ExitCode())
-		} else if err, ok := unwrapError.(*exec.ExitError); ok {
-			os.Exit(err.ExitCode())
-		} else {
-			os.Exit(1)
+	default:
+		if err := command.Run(args[0:]); err != nil {
+			handleError(err)
 		}
 	}
+}
+
+func handleError(err error) {
+	if os.Getenv("DEBUG") == "1" {
+		fmt.Fprintf(os.Stderr, "%+v\n", err)
+	} else {
+		fmt.Fprintf(os.Stderr, "%s\n", err.Error())
+		fmt.Fprintln(os.Stderr, "Print debug information when set DEBUG=1")
+	}
+
+	if exitErr, ok := err.(*exec.ExitError); ok {
+		os.Exit(exitErr.ExitCode())
+	} else if unwrappedErr := errors.Unwrap(err); unwrappedErr != nil {
+		if exitErr, ok := unwrappedErr.(*exec.ExitError); ok {
+			os.Exit(exitErr.ExitCode())
+		}
+	}
+
+	os.Exit(1)
 }

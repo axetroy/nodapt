@@ -108,7 +108,6 @@ github.com/ulikunitz/xz/internal/xlog
 github.com/ulikunitz/xz/lzma
 # github.com/urfave/cli/v3 v3.1.1
 ## explicit; go 1.22
-github.com/urfave/cli/v3
 # go4.org v0.0.0-20230225012048-214862532bf5
 ## explicit; go 1.13
 go4.org/readerutil
