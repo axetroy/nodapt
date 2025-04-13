@@ -82,6 +82,7 @@ func main() {
 				Name:        "run",
 				Usage:       `Automatically select node version to run commands`,
 				Description: `Automatically select node version to run commands`,
+				Arguments:   cli.AnyArguments,
 				ArgsUsage:   `<COMMANDS...>`,
 				Action: func(ctx context.Context, cmd *cli.Command) error {
 					return command.Run(cmd.Args().Slice())
@@ -91,6 +92,7 @@ func main() {
 				Name:        "use",
 				Usage:       "Use the specified version of node to run the command",
 				Description: "Use the specified version of node to run the command",
+				Arguments:   cli.AnyArguments,
 				ArgsUsage:   `<CONSTRAINT> [COMMANDS...]`,
 				Action: func(ctx context.Context, cmd *cli.Command) error {
 					args := cmd.Args().Slice()
@@ -117,6 +119,7 @@ func main() {
 				Usage:       "Remove the specified version of node that installed by nodapt",
 				Description: "Remove the specified version of node that installed by nodapt",
 				Aliases:     []string{"rm"},
+				Arguments:   cli.AnyArguments,
 				ArgsUsage:   `<CONSTRAINT...>`,
 				Action: func(ctx context.Context, cmd *cli.Command) error {
 					for _, constraint := range cmd.Args().Slice() {
@@ -164,7 +167,7 @@ func main() {
 		fmt.Printf("%s %s %s\n", version, commit, date)
 	}
 
-	cli.HelpPrinter = func(w io.Writer, templ string, data interface{}) {
+	cli.HelpPrinter = func(w io.Writer, templ string, data any) {
 		printHelp()
 	}
 
