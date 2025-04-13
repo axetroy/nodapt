@@ -31,6 +31,8 @@ func getNewLine(shellName string) string {
 }
 
 func Start(shellPath string, env map[string]string, welcome string) error {
+	println(welcome)
+
 	ptmx, err := pty.New()
 	if err != nil {
 		return err
@@ -126,8 +128,6 @@ func Start(shellPath string, env map[string]string, welcome string) error {
 		// Timeout after 200ms, signal to stop reading
 		close(stopCh)
 	}
-
-	println(welcome)
 
 	_, _ = ptmx.Write([]byte(newLine))
 
