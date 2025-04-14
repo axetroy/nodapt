@@ -87,7 +87,7 @@ $ nodapt --help
 ### 卸载
 
 ```bash
-$ nodapt clean
+$ nodapt clean # 或者移除 ~/.nodapt 目录
 # 然后移除可执行文件，或者通过包管理器卸载
 ```
 

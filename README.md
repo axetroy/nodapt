@@ -87,7 +87,7 @@ $ nodapt --help
 ### Uninstallation
 
 ```bash
-$ nodapt clean
+$ nodapt clean # or remove the ~/.nodapt directory
 # Then remove the executable file or uninstall it via your package manager
 ```
 
