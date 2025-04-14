@@ -73,13 +73,17 @@ func Use(constraint *string) error {
 	}
 
 	oldPath := os.Getenv("PATH")
-	defer os.Setenv("PATH", oldPath) // 确保在函数返回时恢复原始的 PATH
+	oldNpmConfigPrefix := os.Getenv("NPM_CONFIG_PREFIX")
+	defer os.Setenv("PATH", oldPath)                         // 确保在函数返回时恢复原始的 PATH
+	defer os.Setenv("NPM_CONFIG_PREFIX", oldNpmConfigPrefix) // 确保在函数返回时恢复原始的 NPM_CONFIG_PREFIX
 
 	// 设置新的 PATH 变量
 	os.Setenv("PATH", util.AppendEnvPath(binaryFileDir))
+	os.Setenv("NPM_CONFIG_PREFIX", nodePath)
 
 	if err := crosspty.Start(shellPath, map[string]string{
-		"PATH": os.Getenv("PATH"),
+		"NPM_CONFIG_PREFIX": os.Getenv("NPM_CONFIG_PREFIX"),
+		"PATH":              os.Getenv("PATH"),
 	}, fmt.Sprintf("Welcome to the nodapt shell, Currently using node %s!", *version)); err != nil {
 		return errors.WithStack(err)
 	}

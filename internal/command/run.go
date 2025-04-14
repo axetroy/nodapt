@@ -65,10 +65,13 @@ func run(options *RunOptions) error {
 	command := options.Cmd[0]
 
 	oldPath := os.Getenv("PATH")
+	oldNpmConfigPrefix := os.Getenv("NPM_CONFIG_PREFIX")
 
 	defer os.Setenv("PATH", oldPath)
+	defer os.Setenv("NPM_CONFIG_PREFIX", oldNpmConfigPrefix)
 
 	os.Setenv("PATH", util.AppendEnvPath(binaryFileDir))
+	os.Setenv("NPM_CONFIG_PREFIX", nodeEnvPath)
 
 	if len(options.Cmd) == 1 {
 		process = exec.Command(command)
