@@ -133,6 +133,8 @@ func main() {
 		}
 	case "help":
 		printHelp()
+	case "version":
+		defaultBehaviorHandler(false, true, "")
 	case "run":
 		if err := command.Run(args[1:]); err != nil {
 			handleError(err)
