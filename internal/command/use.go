@@ -84,7 +84,7 @@ func Use(constraint *string) error {
 	if err := crosspty.Start(shellPath, map[string]string{
 		"NPM_CONFIG_PREFIX": os.Getenv("NPM_CONFIG_PREFIX"),
 		"PATH":              os.Getenv("PATH"),
-	}, fmt.Sprintf("nodapt shell initialized with Node.js %s, Type 'exit' to exit the shell.", *version)); err != nil {
+	}, fmt.Sprintf("nodapt shell initialized with Node.js %s, Type 'exit' to exit.", *version)); err != nil {
 		return errors.WithStack(err)
 	}
 
