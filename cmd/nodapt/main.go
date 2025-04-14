@@ -8,6 +8,7 @@ import (
 	"os/exec"
 
 	"github.com/axetroy/nodapt/internal/command"
+	"github.com/axetroy/nodapt/internal/util"
 )
 
 var (
@@ -82,6 +83,8 @@ func main() {
 
 	showHelp := *helpLongFlag || *helpShortFlag
 	showVersion := *versionLongFlag || *versionShortFlag
+
+	util.Debug("args %v\n", os.Args)
 
 	args := flag.Args()
 
