@@ -51,7 +51,6 @@ COMMANDS:
   clean                       Remove all the node version that installed by nodapt
   ls|list                     List all the installed node version
   ls-remote|list-remote       List all the available node version
-  help <COMMAND>              Print help information for the specified command
 
 GLOBAL OPTIONS:
   --help|-h                   Print help information
@@ -131,10 +130,6 @@ func main() {
 		if err := command.ListRemote(); err != nil {
 			handleError(err)
 		}
-	case "help":
-		printHelp()
-	case "version":
-		defaultBehaviorHandler(false, true, "")
 	case "run":
 		if err := command.Run(args[1:]); err != nil {
 			handleError(err)
