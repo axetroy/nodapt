@@ -37,7 +37,14 @@ func DownloadFile(url string, dest string) error {
 
 	// Set up progress bar
 	tmpl := fmt.Sprintf(`{{string . "prefix"}}{{ "%s" }} {{counters . }} {{ bar . "[" "=" ">" "-" "]"}} {{percent . }} {{speed . }}{{string . "suffix"}}`, filepath.Base(dest))
-	bar := pb.ProgressBarTemplate(tmpl).Start64(resp.ContentLength)
+	
+	// Handle unknown content length (resp.ContentLength can be -1)
+	contentLength := resp.ContentLength
+	if contentLength < 0 {
+		contentLength = 0 // Progress bar will show bytes downloaded without percentage
+	}
+	
+	bar := pb.ProgressBarTemplate(tmpl).Start64(contentLength)
 	bar.SetWriter(os.Stdout)
 	defer bar.Finish()
 

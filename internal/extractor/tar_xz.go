@@ -59,20 +59,8 @@ func extractTarXzFile(reader *tar.Reader, header *tar.Header, destFolder string)
 		return fmt.Errorf("unsupported file type: %v in %s", header.Typeflag, header.Name)
 	}
 
-	// If the file is executable, ensure proper permissions.
-	if header.FileInfo().Mode()&0111 != 0 {
-		if _, err := os.Stat(destPath); err != nil {
-			if os.IsNotExist(err) {
-				return nil
-			}
-
-			return errors.WithStack(err)
-		} else {
-			if err := os.Chmod(destPath, os.FileMode(header.Mode)); err != nil {
-				return errors.WithStack(err)
-			}
-		}
-	}
+	// Permissions are already set correctly when files are created above with os.FileMode(header.Mode)
+	// No need for additional chmod for regular files and directories
 
 	return nil
 }

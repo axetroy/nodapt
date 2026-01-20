@@ -41,12 +41,16 @@ func Download(version string, dir string) (string, error) {
 		return "", errors.WithStack(err)
 	}
 
-	// Remove the downloaded file after extraction
-	defer os.Remove(destFile)
-
 	// Decompress the file into the node folder
 	if err := extractor.Extract(destFile, filepath.Dir(extractFolder)); err != nil {
+		// If extraction fails, the downloaded file remains for debugging
 		return "", errors.WithStack(err)
+	}
+
+	// Remove the downloaded file after successful extraction
+	if err := os.Remove(destFile); err != nil {
+		// Log warning but don't fail - extraction was successful
+		util.Debug("Warning: failed to remove temporary file %s: %v\n", destFile, err)
 	}
 
 	return extractFolder, nil

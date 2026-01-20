@@ -68,11 +68,18 @@ func getParentProcessInfo(pid int) (int, string, error) {
 }
 
 func getShellFromProcess(pid int) (string, error) {
-	for {
+	const maxDepth = 100 // Prevent infinite loop by limiting parent process traversal
+	
+	for i := 0; i < maxDepth; i++ {
 		ppid, command, err := getParentProcessInfo(pid)
 
 		if err != nil {
 			return "", err
+		}
+
+		// Stop if we've reached init process (pid 1) or invalid pid
+		if ppid <= 1 {
+			return "", errors.New("reached root process without finding known shell")
 		}
 
 		if isKnownShell(command) {
@@ -82,6 +89,7 @@ func getShellFromProcess(pid int) (string, error) {
 		pid = ppid
 	}
 
+	return "", errors.New("exceeded maximum depth searching for parent shell")
 }
 
 func GetPath() (string, error) {
