@@ -57,7 +57,8 @@ func removeNodePath(paths string) string {
 func AppendEnvPath(pathDir string) string {
 	oldPath := removeNodePath(os.Getenv("PATH"))
 
-	newPath := fmt.Sprintf("%s%c%s%c%s", pathDir, os.PathListSeparator, oldPath, os.PathListSeparator, pathDir)
+	// Prepend pathDir to the PATH
+	newPath := fmt.Sprintf("%s%c%s", pathDir, os.PathListSeparator, oldPath)
 
 	return newPath
 }

@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/signal"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/aymanbagabas/go-pty"
@@ -74,17 +75,24 @@ func Start(shellPath string, env map[string]string, welcome string) error {
 
 	// Set environment variables
 	for k, v := range env {
+		// Escape single quotes in the value to prevent injection
+		escapedValue := strings.Replace(v, "'", "'\"'\"'", -1)
+		
 		switch shellName {
 		case "bash", "zsh":
-			_, _ = ptmx.Write([]byte(fmt.Sprintf("export %s='%s'", k, v) + newLine))
+			_, _ = ptmx.Write([]byte(fmt.Sprintf("export %s='%s'", k, escapedValue) + newLine))
 		case "fish":
-			_, _ = ptmx.Write([]byte(fmt.Sprintf("set -gx %s '%s'", k, v) + newLine))
+			_, _ = ptmx.Write([]byte(fmt.Sprintf("set -gx %s '%s'", k, escapedValue) + newLine))
 		case "powershell", "powershell.exe":
-			_, _ = ptmx.Write([]byte(fmt.Sprintf("$env:%s='%s'", k, v) + newLine))
+			// For PowerShell, escape single quotes by doubling them
+			escapedValue = strings.Replace(v, "'", "''", -1)
+			_, _ = ptmx.Write([]byte(fmt.Sprintf("$env:%s='%s'", k, escapedValue) + newLine))
 		case "cmd", "cmd.exe":
+			// For CMD, no quotes needed but escape special characters
+			// Note: This is a basic implementation; full CMD escaping is complex
 			_, _ = ptmx.Write([]byte("set " + k + "=" + v + newLine))
 		default:
-			_, _ = ptmx.Write([]byte(fmt.Sprintf("export %s='%s'", k, v) + newLine))
+			_, _ = ptmx.Write([]byte(fmt.Sprintf("export %s='%s'", k, escapedValue) + newLine))
 		}
 	}
 

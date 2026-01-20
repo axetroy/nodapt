@@ -1,6 +1,7 @@
 package command
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 
@@ -21,7 +22,11 @@ func init() {
 	homeDir, err := os.UserHomeDir()
 
 	if err != nil {
-		panic(err)
+		// Fallback to temporary directory if home directory is not available
+		fmt.Fprintf(os.Stderr, "Warning: Unable to get user home directory: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Using temporary directory as fallback\n")
+		nodapt_dir = filepath.Join(os.TempDir(), ".nodapt")
+		return
 	}
 
 	nodapt_dir = filepath.Join(homeDir, ".nodapt")
