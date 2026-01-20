@@ -118,16 +118,16 @@ func Start(shellPath string, env map[string]string, welcome string) error {
 	// Use channels to coordinate goroutine cleanup
 	buf := make([]byte, 1024)
 	done := make(chan struct{})
+	stop := make(chan struct{})
 	
 	go func() {
 		defer close(done)
-		// Read and discard output for up to 200ms
+		// Read and discard output until stopped or error
 		for {
 			select {
-			case <-done:
+			case <-stop:
 				return
 			default:
-				// Set a short deadline to avoid blocking forever
 				n, err := ptmx.Read(buf)
 				if err != nil || n == 0 {
 					return
@@ -141,11 +141,11 @@ func Start(shellPath string, env map[string]string, welcome string) error {
 	case <-done:
 		// Goroutine completed successfully
 	case <-time.After(200 * time.Millisecond):
-		// Timeout - goroutine will exit on next read when it checks the done channel
+		// Timeout - signal goroutine to stop
+		close(stop)
+		// Wait for goroutine to acknowledge the stop signal
+		<-done
 	}
-
-	// Give the goroutine a moment to exit cleanly
-	time.Sleep(10 * time.Millisecond)
 
 	_, _ = ptmx.Write([]byte(newLine))
 
