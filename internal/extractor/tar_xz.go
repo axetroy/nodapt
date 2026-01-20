@@ -2,7 +2,6 @@ package extractor
 
 import (
 	"archive/tar"
-	"fmt"
 	"io"
 	"os"
 	"path/filepath"
@@ -19,7 +18,7 @@ func extractTarXzFile(reader *tar.Reader, header *tar.Header, destFolder string)
 
 	// Ensure no file path traversal attacks by sanitizing the path.
 	if !strings.HasPrefix(destPath, filepath.Clean(destFolder)+string(os.PathSeparator)) {
-		return fmt.Errorf("invalid file path: %s", header.Name)
+		return errors.Errorf("invalid file path: %s", header.Name)
 	}
 
 	switch header.Typeflag {
@@ -56,7 +55,7 @@ func extractTarXzFile(reader *tar.Reader, header *tar.Header, destFolder string)
 	// 		return errors.WithStack(err)
 	// 	}
 	default:
-		return fmt.Errorf("unsupported file type: %v in %s", header.Typeflag, header.Name)
+		return errors.Errorf("unsupported file type: %v in %s", header.Typeflag, header.Name)
 	}
 
 	// Permissions are already set correctly when files are created above with os.FileMode(header.Mode)
@@ -70,14 +69,14 @@ func extractTarXz(tarXzFilePath, destFolder string) error {
 	// Open the .tar.xz file.
 	file, err := os.Open(tarXzFilePath)
 	if err != nil {
-		return fmt.Errorf("failed to open file %s: %w", tarXzFilePath, err)
+		return errors.Wrapf(err, "failed to open file %s", tarXzFilePath)
 	}
 	defer file.Close()
 
 	// Create xz.Reader to decompress the .xz data.
 	xzReader, err := xz.NewReader(file)
 	if err != nil {
-		return fmt.Errorf("failed to create xz reader: %w", err)
+		return errors.Wrap(err, "failed to create xz reader")
 	}
 
 	// Create tar.Reader to read the decompressed .tar data.
@@ -92,7 +91,7 @@ func extractTarXz(tarXzFilePath, destFolder string) error {
 		}
 
 		if err != nil {
-			return fmt.Errorf("failed to read tar header: %w", err)
+			return errors.Wrap(err, "failed to read tar header")
 		}
 
 		// Extract each file.
