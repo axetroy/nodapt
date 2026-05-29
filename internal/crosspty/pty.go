@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/signal"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/aymanbagabas/go-pty"
@@ -74,18 +75,41 @@ func Start(shellPath string, env map[string]string, welcome string) error {
 
 	// Set environment variables
 	for k, v := range env {
+		var command string
+
 		switch shellName {
 		case "bash", "zsh":
-			_, _ = ptmx.Write([]byte(fmt.Sprintf("export %s='%s'", k, v) + newLine))
+			// Escape single quotes for bash/zsh: replace ' with '"'"'
+			escapedValue := strings.Replace(v, "'", "'\"'\"'", -1)
+			command = fmt.Sprintf("export %s='%s'", k, escapedValue) + newLine
 		case "fish":
-			_, _ = ptmx.Write([]byte(fmt.Sprintf("set -gx %s '%s'", k, v) + newLine))
+			// Escape single quotes for fish: replace ' with '"'"'
+			escapedValue := strings.Replace(v, "'", "'\"'\"'", -1)
+			command = fmt.Sprintf("set -gx %s '%s'", k, escapedValue) + newLine
 		case "powershell", "powershell.exe":
-			_, _ = ptmx.Write([]byte(fmt.Sprintf("$env:%s='%s'", k, v) + newLine))
+			// For PowerShell, escape single quotes by doubling them: ' becomes ''
+			escapedValue := strings.Replace(v, "'", "''", -1)
+			command = fmt.Sprintf("$env:%s='%s'", k, escapedValue) + newLine
 		case "cmd", "cmd.exe":
-			_, _ = ptmx.Write([]byte("set " + k + "=" + v + newLine))
+			// For CMD, wrap in quotes and escape quotes: " becomes ""
+			// Also escape special chars like &, |, <, >, ^, %, !
+			escapedValue := strings.NewReplacer(
+				"\"", "\"\"",
+				"&", "^&",
+				"|", "^|",
+				"<", "^<",
+				">", "^>",
+				"^", "^^",
+				"%", "%%",
+			).Replace(v)
+			command = fmt.Sprintf("set \"%s=%s\"", k, escapedValue) + newLine
 		default:
-			_, _ = ptmx.Write([]byte(fmt.Sprintf("export %s='%s'", k, v) + newLine))
+			// Default to bash-style escaping
+			escapedValue := strings.Replace(v, "'", "'\"'\"'", -1)
+			command = fmt.Sprintf("export %s='%s'", k, escapedValue) + newLine
 		}
+
+		_, _ = ptmx.Write([]byte(command))
 	}
 
 	// Clear the screen
@@ -104,13 +128,15 @@ func Start(shellPath string, env map[string]string, welcome string) error {
 
 	// 清空掉 ptmx 的 stdout 缓冲区，使用 channel 并限制最多读取 500 毫秒
 	buf := make([]byte, 1024)
-	readCh := make(chan struct{})
-	stopCh := make(chan struct{})
+	done := make(chan struct{})
+	stop := make(chan struct{})
+
 	go func() {
-		defer close(readCh)
+		defer close(done)
+		// Read and discard output until stopped or error
 		for {
 			select {
-			case <-stopCh:
+			case <-stop:
 				return
 			default:
 				n, err := ptmx.Read(buf)
@@ -121,6 +147,7 @@ func Start(shellPath string, env map[string]string, welcome string) error {
 		}
 	}()
 
+	// Wait for either completion or timeout
 	select {
 	case <-readCh:
 		// Completed reading

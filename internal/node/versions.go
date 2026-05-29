@@ -47,7 +47,7 @@ func GetAllVersions() (Versions, error) {
 //
 // Returns:
 //   - A pointer to a string containing the matching version if found, or nil if no match is found.
-//   - An error if there was a failure in retrieving the node versions.
+//   - An error if there was a failure in retrieving the node versions or matching the constraint.
 func GetMatchVersion(constraint string) (*string, error) {
 	versions, err := GetAllVersions()
 
@@ -56,7 +56,11 @@ func GetMatchVersion(constraint string) (*string, error) {
 	}
 
 	for _, version := range versions {
-		isMatch, _ := version_constraint.Match(constraint, version.Version)
+		isMatch, err := version_constraint.Match(constraint, version.Version)
+
+		if err != nil {
+			return nil, errors.WithMessagef(err, "failed to match version %s with constraint %s", version.Version, constraint)
+		}
 
 		if isMatch {
 			return &version.Version, nil

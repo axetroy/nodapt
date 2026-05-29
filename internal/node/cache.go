@@ -66,7 +66,14 @@ func GetCachedVersions(nodaptDir string) ([]CachedNode, error) {
 		fName := file.Name()
 
 		if file.IsDir() && strings.HasPrefix(fName, "node-v") {
-			n := strings.SplitN(fName, "-", -1)
+			// Split by "-" and validate we have enough parts
+			// Expected format: "node-v{version}-{platform}-{arch}"
+			n := strings.Split(fName, "-")
+
+			// Need at least 2 parts: "node" and "v{version}"
+			if len(n) < 2 {
+				continue
+			}
 
 			version := n[1]
 
