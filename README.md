@@ -80,7 +80,7 @@ $ nodapt --help
 #### Install via npm
 
 ```bash
-$ npm install @axetroy/nodapt -g
+$ npm install nodapt -g
 $ nodapt --help
 ```
 
