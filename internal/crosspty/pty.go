@@ -9,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/axetroy/nodapt/internal/util"
 	"github.com/aymanbagabas/go-pty"
 	"github.com/pkg/errors"
 	"golang.org/x/term"
@@ -32,7 +33,10 @@ func getNewLine(shellName string) string {
 }
 
 func Start(shellPath string, env map[string]string, welcome string) error {
-	println(welcome)
+	if _, err := os.Stderr.WriteString(welcome + "\n"); err != nil {
+		// Non-fatal, just log the error
+		util.Debug("Warning: failed to write welcome message: %v\n", err)
+	}
 
 	ptmx, err := pty.New()
 	if err != nil {
@@ -65,7 +69,7 @@ func Start(shellPath string, env map[string]string, welcome string) error {
 
 	defer func() { _ = term.Restore(int(os.Stdin.Fd()), oldState) }() // Best effort.
 
-	time.Sleep(1500 * time.Millisecond) // Give the shell some time to start.
+	time.Sleep(1000 * time.Millisecond) // Give the shell some time to start.
 
 	// Copy stdin to the pty and the pty to stdout.
 	// NOTE: The goroutine will keep reading until the next keystroke before returning.
@@ -126,7 +130,8 @@ func Start(shellPath string, env map[string]string, welcome string) error {
 		_, _ = ptmx.Write([]byte("clear" + newLine))
 	}
 
-	// 清空掉 ptmx 的 stdout 缓冲区，使用 channel 并限制最多读取 500 毫秒
+	// Clear the PTY output buffer with a timeout to prevent blocking
+	// Use channels to coordinate goroutine cleanup
 	buf := make([]byte, 1024)
 	done := make(chan struct{})
 	stop := make(chan struct{})
@@ -149,11 +154,13 @@ func Start(shellPath string, env map[string]string, welcome string) error {
 
 	// Wait for either completion or timeout
 	select {
-	case <-readCh:
-		// Completed reading
-	case <-time.After(500 * time.Millisecond):
-		// Timeout after 500ms, signal to stop reading
-		close(stopCh)
+	case <-done:
+		// Goroutine completed successfully
+	case <-time.After(200 * time.Millisecond):
+		// Timeout - signal goroutine to stop
+		close(stop)
+		// Wait for goroutine to acknowledge the stop signal
+		<-done
 	}
 
 	_, _ = ptmx.Write([]byte(newLine))
